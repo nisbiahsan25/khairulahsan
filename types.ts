@@ -53,6 +53,11 @@ export interface SiteData {
     point1: string;
     point2: string;
   };
+  tracking?: {
+    pixelId: string;
+    capiToken: string;
+    testEventCode?: string;
+  };
   experiences: Experience[];
   services: Service[];
   projects: Project[];

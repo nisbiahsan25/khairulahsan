@@ -1,7 +1,6 @@
 
 import { SiteData } from '../types';
 
-// Points to the PHP script we created
 const API_URL = './api/data.php'; 
 
 const DEFAULT_DATA: SiteData = {
@@ -21,18 +20,14 @@ const DEFAULT_DATA: SiteData = {
     point1: "With 4+ years of experience in high-end design.",
     point2: "Blending creativity with strategy for global brands."
   },
+  tracking: {
+    pixelId: "",
+    capiToken: "",
+    testEventCode: ""
+  },
   experiences: [],
   services: [],
-  projects: [
-    {
-      id: "p1",
-      title: "Halo Digital Agency",
-      category: "Business",
-      image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=800",
-      techStack: ["React", "Tailwind"],
-      liveLink: "https://google.com"
-    }
-  ],
+  projects: [],
   blogs: []
 };
 
@@ -65,4 +60,20 @@ export const saveSiteData = async (data: SiteData): Promise<void> => {
     console.error("Critical Error: Could not save to server.", e);
     throw e;
   }
+};
+
+export const triggerLeadEvent = async (name: string, email: string) => {
+    try {
+        await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action_type: 'lead_event',
+                user_name: name,
+                user_email: email
+            })
+        });
+    } catch (e) {
+        console.error("Failed to trigger CAPI lead event", e);
+    }
 };
