@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, Plus, MoveDown, ArrowRight, Cpu, Terminal, Monitor, Globe, Rocket, Layers, Briefcase } from 'lucide-react';
+import { ArrowUpRight, MoveDown, ArrowRight, Terminal, Monitor, Cpu, Briefcase } from 'lucide-react';
 import { SiteData } from '../types';
 import { motion } from 'framer-motion';
 
@@ -12,20 +12,19 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = ({ data }) => {
   if (!data) return null;
 
-  const { hero, about, experiences, projects } = data;
-
+  const { hero, experiences, projects } = data;
   const titleWords = hero.headline.split(" ");
 
-  const servicePreview = [
+  const webServices = [
     {
-      title: "Fullstack Development",
+      title: "Elite Web Engineering",
       icon: <Terminal className="text-indigo-600" />,
-      features: ["React & Next.js", "Node.js Backends", "PostgreSQL/MongoDB", "API Integrations"],
+      features: ["Next.js & React Mastery", "Scalable Serverless Code", "Dynamic API Design", "Database Optimization"],
     },
     {
-      title: "UI/UX Research & Design",
+      title: "Technical UI/UX Design",
       icon: <Monitor className="text-purple-600" />,
-      features: ["User Journey Mapping", "Figma Prototyping", "Design Systems", "Conversion Analysis"],
+      features: ["Precision Prototyping", "Design System Architecture", "Interaction Engineering", "Accessibility Standards"],
     }
   ];
 
@@ -43,22 +42,22 @@ const Home: React.FC<HomeProps> = ({ data }) => {
             >
               <div>
                 <span className="stat-number text-3xl font-bold dark:text-white">+{hero.projectsCompleted}</span>
-                <p className="text-[10px] uppercase font-bold text-zinc-400 mt-2 tracking-widest">Project completed</p>
+                <p className="text-[10px] uppercase font-bold text-zinc-400 mt-2 tracking-widest">Built & Deployed</p>
               </div>
               <div>
                 <span className="stat-number text-3xl font-bold dark:text-white">+{hero.startupsRaised}</span>
-                <p className="text-[10px] uppercase font-bold text-zinc-400 mt-2 tracking-widest">Startup raised</p>
+                <p className="text-[10px] uppercase font-bold text-zinc-400 mt-2 tracking-widest">SaaS Redesigns</p>
               </div>
             </motion.div>
             
-            <h1 className="text-7xl md:text-[120px] leading-[0.85] mb-12 font-black tracking-tighter dark:text-white flex flex-wrap">
+            <h1 className="text-7xl md:text-[110px] leading-[0.8] mb-12 font-black tracking-tighter dark:text-white flex flex-wrap">
               {titleWords.map((word, i) => (
                 <motion.span
                   key={i}
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1, duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-                  className="mr-[0.2em]"
+                  className={`mr-[0.2em] ${i === titleWords.length - 1 ? 'text-indigo-600 dark:text-indigo-400' : ''}`}
                 >
                   {word}
                 </motion.span>
@@ -85,7 +84,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
               >
                 <MoveDown size={20} />
               </motion.div>
-              Scroll down
+              Explore Portfolio
             </motion.div>
           </div>
           
@@ -96,11 +95,9 @@ const Home: React.FC<HomeProps> = ({ data }) => {
             whileHover={{ scale: 1.02 }}
             className="relative aspect-[3/4] rounded-[3.5rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] dark:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.6)]"
           >
-            <motion.img 
-              animate={{ scale: [1, 1.05, 1] }}
-              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+            <img 
               src={hero.image} 
-              alt="Profile" 
+              alt="Elite Web Engineering" 
               className="w-full h-full object-cover grayscale-0"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/40 via-transparent to-transparent"></div>
@@ -108,7 +105,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
         </div>
       </section>
 
-      {/* Premium Services */}
+      {/* Web Capabilities */}
       <section className="py-40 px-10 bg-zinc-50 dark:bg-zinc-925 transition-colors">
         <div className="container mx-auto max-w-[1400px]">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
@@ -118,15 +115,15 @@ const Home: React.FC<HomeProps> = ({ data }) => {
                viewport={{ once: true }}
             >
               <span className="text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-6 block">Capabilities</span>
-              <h2 className="text-6xl md:text-8xl font-black mb-10 leading-[0.9] dark:text-white">High Stakes Engineering.</h2>
-              <p className="text-zinc-600 dark:text-zinc-400 text-xl font-medium mb-12 max-w-lg">We deliver precision digital assets designed to scale your business and automate your growth.</p>
+              <h2 className="text-6xl md:text-8xl font-black mb-10 leading-[0.9] dark:text-white">Precision Web <br/> Engineering.</h2>
+              <p className="text-zinc-600 dark:text-zinc-400 text-xl font-medium mb-12 max-w-lg">I build digital tools for brands that refuse to settle for templates. Every line of code is handwritten for performance and impact.</p>
               <Link to="/services" className="px-10 py-6 bg-white dark:bg-zinc-800 rounded-full font-black uppercase tracking-widest text-xs flex items-center gap-4 border border-zinc-200 dark:border-zinc-700 hover:shadow-xl transition-all w-fit dark:text-white">
-                 Discuss Your Project <ArrowRight size={18} />
+                 View All Services <ArrowRight size={18} />
               </Link>
             </motion.div>
 
             <div className="grid gap-8">
-               {servicePreview.map((s, idx) => (
+               {webServices.map((s, idx) => (
                  <motion.div 
                    key={idx}
                    initial={{ opacity: 0, y: 30 }}
@@ -153,18 +150,18 @@ const Home: React.FC<HomeProps> = ({ data }) => {
         </div>
       </section>
 
-      {/* Professional Career - High Visibility */}
+      {/* Career Timeline */}
       <section className="py-40 px-10 dark:bg-zinc-950 transition-colors">
         <div className="container mx-auto max-w-[1400px]">
           <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-10">
             <div className="max-w-2xl">
-              <span className="text-[10px] uppercase font-bold text-zinc-400 mb-4 block tracking-[0.2em]">• Track Record</span>
-              <h2 className="text-6xl md:text-8xl font-black dark:text-white leading-[0.9]">Professional <br/> Experience</h2>
+              <span className="text-[10px] uppercase font-bold text-zinc-400 mb-4 block tracking-[0.2em]">• Career Graph</span>
+              <h2 className="text-6xl md:text-8xl font-black dark:text-white leading-[0.9]">Web Development <br/> Experience</h2>
             </div>
           </div>
 
           <div className="grid gap-8">
-            {experiences && experiences.length > 0 ? experiences.map((exp, idx) => (
+            {experiences.map((exp, idx) => (
               <motion.div 
                 key={exp.id || idx}
                 initial={{ opacity: 0, y: 20 }}
@@ -192,22 +189,17 @@ const Home: React.FC<HomeProps> = ({ data }) => {
                    </div>
                 </div>
               </motion.div>
-            )) : (
-              <div className="text-center py-32 bg-zinc-50 dark:bg-zinc-900/20 rounded-[4rem] border-2 border-dashed border-zinc-200 dark:border-zinc-800">
-                <p className="text-zinc-400 dark:text-zinc-600 font-bold italic text-xl">Career data synchronizing with global servers...</p>
-                <p className="text-zinc-400 text-xs uppercase tracking-widest mt-4">Please verify entries in the Cloud Console</p>
-              </div>
-            )}
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Latest Works */}
+      {/* Featured Works */}
       <section className="py-40 px-10 bg-zinc-50 dark:bg-zinc-925 transition-colors">
         <div className="container mx-auto max-w-[1400px]">
           <div className="text-center mb-24">
-            <span className="text-[10px] uppercase font-bold text-zinc-400 mb-4 block tracking-[0.2em]">• Showcase</span>
-            <h2 className="text-7xl font-black dark:text-white">Latest Masterworks</h2>
+            <span className="text-[10px] uppercase font-bold text-zinc-400 mb-4 block tracking-[0.2em]">• Portfolio</span>
+            <h2 className="text-7xl font-black dark:text-white">Recent Web Deployments</h2>
           </div>
           
           <div className="grid md:grid-cols-3 gap-10">
@@ -232,7 +224,6 @@ const Home: React.FC<HomeProps> = ({ data }) => {
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className="text-white text-xs font-black uppercase tracking-[0.2em] border-b-2 border-indigo-500 pb-1 hover:text-indigo-400 transition-colors cursor-pointer"
-                      onClick={(e) => e.stopPropagation()}
                      >
                        Explore Live
                      </a>
@@ -254,10 +245,10 @@ const Home: React.FC<HomeProps> = ({ data }) => {
             viewport={{ once: true }}
             className="text-6xl md:text-9xl font-black mb-12 tracking-tighter dark:text-white leading-[0.85]"
           >
-            Got a Vision? <br/> Let's Build It.
+            Ready for a <br/> Digital Overhaul?
           </motion.h2>
           <Link to="/contact" className="inline-flex items-center gap-4 border-b-[4px] border-indigo-600 dark:border-indigo-400 pb-4 font-black text-2xl md:text-4xl hover:opacity-50 transition-opacity dark:text-white">
-            Book A Discovery Call <ArrowUpRight size={40} />
+            Schedule Discovery Call <ArrowUpRight size={40} />
           </Link>
         </div>
       </section>
