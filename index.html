@@ -1,11 +1,39 @@
 
 <!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>khairulahsan | Personal Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Plus Jakarta Sans', 'sans-serif'],
+              display: ['Plus Jakarta Sans', 'sans-serif'],
+              grotesk: ['Space Grotesk', 'sans-serif'],
+            },
+            colors: {
+              zinc: {
+                950: '#09090b',
+                925: '#121215', // Slightly lighter than 950 for better card contrast
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <script>
+      // Apply theme before page load
+      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('theme', 'light');
+      }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
       :root {
@@ -17,10 +45,14 @@
         background-color: #ffffff;
         color: #111111;
         overflow-x: hidden;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      .dark body {
+        background-color: #09090b;
+        color: #e4e4e7; /* Lighter text for better contrast */
       }
       h1, h2, h3, h4, .font-display {
         font-family: 'Plus Jakarta Sans', sans-serif;
-        color: #000000;
         letter-spacing: -0.04em;
         font-weight: 800;
       }
@@ -32,19 +64,47 @@
         border: 1px solid rgba(0, 0, 0, 0.03);
         transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
       }
+      .dark .glass-card {
+        background: #121215;
+        border-color: rgba(255, 255, 255, 0.05);
+      }
       .glass-card:hover {
         background: #ffffff;
         box-shadow: 0 20px 40px -10px rgba(0,0,0,0.05);
+      }
+      .dark .glass-card:hover {
+        background: #1c1c21;
+        box-shadow: 0 20px 40px -10px rgba(0,0,0,0.4);
       }
       .image-mask {
         mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
       }
       ::-webkit-scrollbar {
-        width: 4px;
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
       }
       ::-webkit-scrollbar-thumb {
-        background: #eee;
+        background: #d4d4d8;
         border-radius: 10px;
+      }
+      .dark ::-webkit-scrollbar-thumb {
+        background: #3f3f46;
+      }
+      .premium-list li {
+        position: relative;
+        padding-left: 1.5rem;
+      }
+      .premium-list li::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.6em;
+        width: 8px;
+        height: 8px;
+        background: #6366f1;
+        border-radius: 50%;
       }
     </style>
 <script type="importmap">
@@ -60,7 +120,7 @@
 }
 </script>
 </head>
-<body>
+<body class="bg-white dark:bg-zinc-950">
     <div id="root"></div>
 </body>
 </html>

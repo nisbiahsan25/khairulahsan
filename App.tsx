@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -19,24 +19,17 @@ const MetaPixel = ({ pixelId }: { pixelId?: string }) => {
   useEffect(() => {
     if (!pixelId) return;
 
-    // Standard Pixel Initialization
-    // Fix: Using any for window to avoid Property existence and void check errors on standard snippet
     const f = window as any;
     const b = document;
     const e = 'script';
     const v = 'https://connect.facebook.net/en_US/fbevents.js';
 
-    // Fix Error: An expression of type 'void' cannot be tested for truthiness.
-    // This happens when fbq is inferred from a global type that returns void.
     if (f.fbq) return;
 
     const n: any = f.fbq = function () {
-      // Fix: Property 'fbq' does not exist on type 'Window'.
-      // Use any to allow access to dynamic properties added by the script.
       n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
     };
     
-    // Fix: Property '_fbq' does not exist on type 'Window'.
     if (!f._fbq) f._fbq = n;
     n.push = n;
     n.loaded = !0;
@@ -62,7 +55,6 @@ const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
-    // Track PageView on route change if pixel is loaded
     if ((window as any).fbq) {
       (window as any).fbq('track', 'PageView');
     }
@@ -74,7 +66,7 @@ const App: React.FC = () => {
   const [siteData, setSiteData] = useState<SiteData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const data = await fetchSiteData();
       setSiteData(data);
@@ -83,21 +75,18 @@ const App: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [loadData]);
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-white flex items-center justify-center">
+      <div className="fixed inset-0 bg-white dark:bg-zinc-950 flex items-center justify-center">
         <div className="relative w-24 h-24">
-          <div className="absolute inset-0 border-4 border-indigo-100 rounded-full"></div>
+          <div className="absolute inset-0 border-4 border-zinc-100 dark:border-zinc-800 rounded-full"></div>
           <div className="absolute inset-0 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-          <div className="absolute inset-0 flex items-center justify-center font-bold text-xs tracking-widest uppercase opacity-50 text-indigo-900">
-            KA
-          </div>
         </div>
       </div>
     );
@@ -107,18 +96,18 @@ const App: React.FC = () => {
     <Router>
       <ScrollToTop />
       <MetaPixel pixelId={siteData?.tracking?.pixelId} />
-      <div className="min-h-screen flex flex-col selection:bg-indigo-600 selection:text-white bg-white text-zinc-900">
+      <div className="min-h-screen flex flex-col selection:bg-indigo-600 selection:text-white bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
         <Navbar />
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home data={siteData} />} />
-            <Route path="/portfolio" element={<Portfolio projects={siteData?.projects || []} />} />
+            <Route path="/portfolio" element={<Portfolio projects={siteData?.projects || []} categories={siteData?.categories || []} />} />
             <Route path="/services" element={<Services services={siteData?.services || []} />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin" element={<Admin onSaveSuccess={loadData} />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>

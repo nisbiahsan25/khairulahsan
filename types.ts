@@ -1,5 +1,5 @@
 
-export type Category = 'Law' | 'Medical' | 'E-commerce' | 'Business' | 'Education' | 'Personal';
+export type Category = string;
 
 export interface Experience {
   id: string;
@@ -58,6 +58,7 @@ export interface SiteData {
     capiToken: string;
     testEventCode?: string;
   };
+  categories: string[];
   experiences: Experience[];
   services: Service[];
   projects: Project[];

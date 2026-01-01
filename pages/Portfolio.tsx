@@ -2,14 +2,14 @@
 import React, { useState } from 'react';
 import { Project, Category } from '../types';
 import ProjectCard from '../components/ProjectCard';
-import { CATEGORIES } from '../constants';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface PortfolioProps {
   projects: Project[];
+  categories: string[];
 }
 
-const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
+const Portfolio: React.FC<PortfolioProps> = ({ projects, categories }) => {
   const [activeCategory, setActiveCategory] = useState<Category | 'all'>('all');
 
   const filteredProjects = activeCategory === 'all' 
@@ -17,7 +17,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
     : projects.filter(p => p.category === activeCategory);
 
   return (
-    <div className="pt-40 pb-32">
+    <div className="pt-40 pb-32 bg-white dark:bg-zinc-950 transition-colors">
       <div className="container mx-auto px-6 max-w-7xl">
         <header className="max-w-4xl mb-24">
           <motion.span 
@@ -30,7 +30,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-6xl md:text-9xl font-black mb-10 font-display tracking-tight leading-[0.9]"
+            className="text-6xl md:text-9xl font-black mb-10 font-display tracking-tight leading-[0.9] dark:text-white"
           >
             Digital <br/> Mastery.
           </motion.h1>
@@ -38,25 +38,35 @@ const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-xl md:text-2xl text-zinc-500 leading-relaxed max-w-2xl font-medium"
+            className="text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-2xl font-medium"
           >
             A curated selection of high-performance solutions we've engineered for clients across the globe.
           </motion.p>
         </header>
 
-        {/* Categories Bar */}
+        {/* Dynamic Categories Bar */}
         <div className="flex flex-wrap gap-2 mb-20">
-          {CATEGORIES.map((cat) => (
+          <button
+            onClick={() => setActiveCategory('all')}
+            className={`px-8 py-4 rounded-full text-[11px] font-black uppercase tracking-widest transition-all ${
+              activeCategory === 'all' 
+                ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 shadow-2xl' 
+                : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900'
+            }`}
+          >
+            All Projects
+          </button>
+          {categories.map((cat) => (
             <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id as Category | 'all')}
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
               className={`px-8 py-4 rounded-full text-[11px] font-black uppercase tracking-widest transition-all ${
-                activeCategory === cat.id 
-                  ? 'bg-white text-black shadow-2xl shadow-white/10' 
-                  : 'text-zinc-500 hover:text-white hover:bg-white/5'
+                activeCategory === cat 
+                  ? 'bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 shadow-2xl' 
+                  : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900'
               }`}
             >
-              {cat.label}
+              {cat}
             </button>
           ))}
         </div>
@@ -81,8 +91,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
                 </motion.div>
               ))
             ) : (
-              <div className="col-span-full py-40 text-center glass rounded-[4rem] border-dashed border-white/10">
-                <h3 className="text-2xl font-bold text-zinc-600 font-display">Archiving new masterworks...</h3>
+              <div className="col-span-full py-40 text-center bg-zinc-50 dark:bg-zinc-900/50 rounded-[4rem] border-2 border-dashed border-zinc-200 dark:border-zinc-800">
+                <h3 className="text-2xl font-bold text-zinc-400 font-display">Archiving new masterworks...</h3>
               </div>
             )}
           </AnimatePresence>
