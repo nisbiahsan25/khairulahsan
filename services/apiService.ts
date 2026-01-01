@@ -98,6 +98,50 @@ const DEFAULT_DATA: SiteData = {
       liveLink: "https://example.com"
     }
   ],
+  testimonials: [
+    {
+      id: "t1",
+      name: "Marcus Thorne",
+      role: "CTO, NexaCorp",
+      content: "The frontend engineering was impeccable. Our Lighthouse scores jumped from 40 to 100 instantly, significantly reducing our customer bounce rate.",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200"
+    },
+    {
+      id: "t2",
+      name: "Sarah Jenkins",
+      role: "Lead Designer, Bloom Digital",
+      content: "A masterclass in React development. They took our complex design specs and turned them into a fluid, pixel-perfect web application that feels premium.",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200"
+    },
+    {
+      id: "t3",
+      name: "Julian Vane",
+      role: "Head of Tech, Vane SaaS",
+      content: "Finding a developer who understands both aesthetic UI and scalable system architecture is rare. The clean code and API structure were world-class.",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200"
+    },
+    {
+      id: "t4",
+      name: "Elena Rodriguez",
+      role: "E-commerce Director",
+      content: "The Next.js optimization they implemented for our store was a game changer. Site load times are under 1 second, and our mobile conversion has doubled.",
+      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200"
+    },
+    {
+      id: "t5",
+      name: "David Chen",
+      role: "Founder, TechFlow Systems",
+      content: "Elite-level fullstack work. The custom dashboard they developed handles our data complex logic effortlessly while maintaining a sleek, modern user interface.",
+      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200"
+    },
+    {
+      id: "t6",
+      name: "Sophia Wright",
+      role: "Product Manager, Luxe Web",
+      content: "The GSAP animations and motion design provided a level of polish we didn't think was possible on the web. It truly set our brand apart from competitors.",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"
+    }
+  ],
   blogs: []
 };
 
@@ -109,6 +153,9 @@ export const fetchSiteData = async (): Promise<SiteData> => {
       if (data && !data.error) {
         if (!data.categories) {
            data.categories = DEFAULT_DATA.categories;
+        }
+        if (!data.testimonials) {
+           data.testimonials = DEFAULT_DATA.testimonials;
         }
         return data;
       }

@@ -10,6 +10,14 @@ export interface Experience {
   highlight?: boolean;
 }
 
+export interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  content: string;
+  avatar?: string;
+}
+
 export interface BlogPost {
   id: string;
   category: string;
@@ -63,4 +71,5 @@ export interface SiteData {
   services: Service[];
   projects: Project[];
   blogs: BlogPost[];
+  testimonials: Testimonial[];
 }

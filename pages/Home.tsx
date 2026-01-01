@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, MoveDown, ArrowRight, Terminal, Monitor, Cpu, Briefcase } from 'lucide-react';
+import { ArrowUpRight, MoveDown, ArrowRight, Terminal, Monitor, Cpu, Briefcase, Quote } from 'lucide-react';
 import { SiteData } from '../types';
 import { motion } from 'framer-motion';
 
@@ -12,7 +12,7 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = ({ data }) => {
   if (!data) return null;
 
-  const { hero, experiences, projects } = data;
+  const { hero, experiences, projects, testimonials } = data;
   const titleWords = hero.headline.split(" ");
 
   const webServices = [
@@ -232,6 +232,42 @@ const Home: React.FC<HomeProps> = ({ data }) => {
                 </div>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-40 px-10 bg-white dark:bg-zinc-950 transition-colors">
+        <div className="container mx-auto max-w-[1400px]">
+          <div className="mb-24">
+             <span className="text-[10px] uppercase font-bold text-zinc-400 mb-4 block tracking-[0.2em]">• Social Proof</span>
+             <h2 className="text-6xl md:text-8xl font-black dark:text-white leading-none">Client <br/> Verdicts.</h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-10">
+             {testimonials && testimonials.map((t, idx) => (
+                <motion.div 
+                  key={t.id || idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="bg-zinc-50 dark:bg-zinc-925 p-16 rounded-[4rem] border border-zinc-100 dark:border-zinc-800 relative group"
+                >
+                   <Quote className="text-indigo-600/20 absolute top-12 right-12" size={80} />
+                   <p className="text-2xl md:text-3xl font-medium text-zinc-600 dark:text-zinc-300 leading-relaxed mb-12 relative z-10 italic">
+                      "{t.content}"
+                   </p>
+                   <div className="flex items-center gap-6">
+                      <div className="w-20 h-20 rounded-full overflow-hidden grayscale group-hover:grayscale-0 transition-all border-4 border-white dark:border-zinc-800">
+                         <img src={t.avatar} alt={t.name} className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                         <h4 className="text-xl font-black dark:text-white">{t.name}</h4>
+                         <p className="text-indigo-600 dark:text-indigo-400 text-xs font-black uppercase tracking-widest">{t.role}</p>
+                      </div>
+                   </div>
+                </motion.div>
+             ))}
           </div>
         </div>
       </section>

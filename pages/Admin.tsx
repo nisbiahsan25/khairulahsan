@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchSiteData, saveSiteData } from '../services/apiService';
-import { SiteData, Experience, Project, Category } from '../types';
-import { Save, Plus, Trash2, Layout, User, Briefcase, Image as ImageIcon, LogOut, CheckCircle, Upload, Activity, ShieldCheck, Link as LinkIcon, Tag, X, Key, Zap } from 'lucide-react';
+import { SiteData, Experience, Project, Category, Testimonial } from '../types';
+import { Save, Plus, Trash2, Layout, User, Briefcase, Image as ImageIcon, LogOut, CheckCircle, Upload, Activity, ShieldCheck, Link as LinkIcon, Tag, X, Key, Zap, MessageSquareQuote } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface AdminProps {
@@ -12,7 +12,7 @@ interface AdminProps {
 
 const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
   const [data, setData] = useState<SiteData | null>(null);
-  const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'experience' | 'projects' | 'tracking'>('hero');
+  const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'experience' | 'projects' | 'tracking' | 'testimonials'>('hero');
   const [saving, setSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
@@ -60,6 +60,23 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const addTestimonial = () => {
+    if (!data) return;
+    const newTest: Testimonial = {
+      id: Date.now().toString(),
+      name: 'Client Name',
+      role: 'Role/Company',
+      content: 'Client feedback here...',
+      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200'
+    };
+    setData({ ...data, testimonials: [newTest, ...(data.testimonials || [])] });
+  };
+
+  const removeTestimonial = (id: string) => {
+    if (!data) return;
+    setData({ ...data, testimonials: data.testimonials.filter(t => t.id !== id) });
   };
 
   const addExperience = () => {
@@ -149,6 +166,7 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
               { id: 'about', label: 'About Identity', icon: <User size={18}/> },
               { id: 'experience', label: 'Career Timeline', icon: <Briefcase size={18}/> },
               { id: 'projects', label: 'Portfolio', icon: <ImageIcon size={18}/> },
+              { id: 'testimonials', label: 'Testimonials', icon: <MessageSquareQuote size={18}/> },
               { id: 'tracking', label: 'Ads & Tracking', icon: <Activity size={18}/> },
             ].map(tab => (
               <button
@@ -271,6 +289,62 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
                        </div>
                     </div>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'testimonials' && (
+              <div className="space-y-12">
+                <header className="flex justify-between items-end">
+                  <div>
+                    <h3 className="text-3xl font-black tracking-tight mb-2 dark:text-white">Client Feedback</h3>
+                    <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">Manage social proof and testimonials.</p>
+                  </div>
+                  <button onClick={addTestimonial} className="flex items-center gap-2 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-6 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-lg hover:bg-indigo-600 transition-all"><Plus size={16} /> Add Testimonial</button>
+                </header>
+                <div className="grid gap-8">
+                  {data.testimonials && data.testimonials.map((test, idx) => (
+                    <div key={test.id} className="bg-white dark:bg-zinc-800/50 p-10 rounded-[3rem] border border-zinc-100 dark:border-zinc-700 relative">
+                       <button onClick={() => removeTestimonial(test.id)} className="absolute top-8 right-8 text-zinc-300 hover:text-red-500"><Trash2 size={20} /></button>
+                       <div className="grid md:grid-cols-2 gap-10">
+                          <div className="space-y-6">
+                             <input placeholder="Client Name" className="w-full bg-zinc-50 dark:bg-zinc-900 p-5 rounded-2xl font-black text-lg dark:text-white" value={test.name} onChange={e => {
+                                const newTests = [...data.testimonials];
+                                newTests[idx].name = e.target.value;
+                                setData({...data, testimonials: newTests});
+                             }} />
+                             <input placeholder="Role / Company" className="w-full bg-zinc-50 dark:bg-zinc-900 p-5 rounded-2xl font-bold text-xs dark:text-white uppercase tracking-widest" value={test.role} onChange={e => {
+                                const newTests = [...data.testimonials];
+                                newTests[idx].role = e.target.value;
+                                setData({...data, testimonials: newTests});
+                             }} />
+                             <div className="flex gap-4 items-center">
+                                <div className="w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
+                                   <img src={test.avatar} className="w-full h-full object-cover" />
+                                </div>
+                                <label className="cursor-pointer text-[10px] font-black uppercase text-indigo-600">Change Avatar <input type="file" className="hidden" onChange={e => handleImageUpload(e, (b) => {
+                                   const newT = [...data.testimonials];
+                                   newT[idx].avatar = b;
+                                   setData({...data, testimonials: newT});
+                                })} /></label>
+                             </div>
+                          </div>
+                          <div className="space-y-4">
+                             <label className="text-[11px] font-black uppercase tracking-widest text-zinc-400">Feedback Content</label>
+                             <textarea 
+                               rows={6} 
+                               className="w-full bg-zinc-50 dark:bg-zinc-900 p-6 rounded-3xl font-medium text-sm dark:text-white resize-none"
+                               value={test.content}
+                               onChange={e => {
+                                  const newTests = [...data.testimonials];
+                                  newTests[idx].content = e.target.value;
+                                  setData({...data, testimonials: newTests});
+                               }}
+                             />
+                          </div>
+                       </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -413,7 +487,7 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
                               </div>
                            </div>
                         </div>
-                     </div>
+                    </div>
                    ))}
                  </div>
                </div>
