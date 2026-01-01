@@ -62,27 +62,6 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
     }
   };
 
-  const addCategory = () => {
-    if (!data || !newCategoryName.trim()) return;
-    if (data.categories.includes(newCategoryName.trim())) {
-      alert("Category already exists.");
-      return;
-    }
-    setData({
-      ...data,
-      categories: [...data.categories, newCategoryName.trim()]
-    });
-    setNewCategoryName('');
-  };
-
-  const removeCategory = (cat: string) => {
-    if (!data) return;
-    setData({
-      ...data,
-      categories: data.categories.filter(c => c !== cat)
-    });
-  };
-
   const addExperience = () => {
     if (!data) return;
     const newExp: Experience = {
@@ -261,6 +240,15 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
                           onChange={e => setData({...data, about: {...data.about, point1: e.target.value}})}
                         />
                      </div>
+                     <div className="space-y-4 md:col-span-2">
+                        <label className="text-[11px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 block ml-2">Core Point 2</label>
+                        <textarea 
+                          rows={2}
+                          className="w-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 p-6 rounded-3xl font-bold text-sm dark:text-white"
+                          value={data.about.point2}
+                          onChange={e => setData({...data, about: {...data.about, point2: e.target.value}})}
+                        />
+                     </div>
                   </div>
                   <div className="space-y-4">
                     <label className="text-[11px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 block ml-2">Images</label>
@@ -343,7 +331,6 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
               </div>
             )}
 
-            {/* Other tabs remain fully functional ... */}
             {activeTab === 'experience' && (
                <div className="space-y-12">
                  <header className="flex justify-between items-end">

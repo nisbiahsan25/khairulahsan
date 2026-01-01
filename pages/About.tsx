@@ -2,8 +2,16 @@
 import React from 'react';
 import { Target, Zap, Cpu, Code } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { SiteData } from '../types';
 
-const About: React.FC = () => {
+interface AboutProps {
+  data: SiteData | null;
+}
+
+const About: React.FC<AboutProps> = ({ data }) => {
+  if (!data) return null;
+  const { about } = data;
+
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
@@ -21,19 +29,29 @@ const About: React.FC = () => {
           <div className="lg:col-span-7">
              <header className="mb-16">
               <motion.span variants={itemVariants} className="text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-6 block">Philosophy</motion.span>
-              <motion.h1 variants={itemVariants} className="text-6xl md:text-9xl font-black mb-12 font-display tracking-tight leading-[0.85] dark:text-white">Engineering <br/> Mastery.</motion.h1>
-              <motion.p variants={itemVariants} className="text-2xl text-zinc-600 dark:text-zinc-400 leading-relaxed mb-12 font-medium">I am a specialized Web Developer and UI Designer dedicated to the pursuit of digital perfection.</motion.p>
+              <motion.h1 variants={itemVariants} className="text-6xl md:text-9xl font-black mb-12 font-display tracking-tight leading-[0.85] dark:text-white">
+                {about.title}
+              </motion.h1>
+              <motion.p variants={itemVariants} className="text-2xl text-zinc-600 dark:text-zinc-400 leading-relaxed mb-12 font-medium">
+                {about.point1}
+              </motion.p>
               
               <div className="space-y-8 text-zinc-500 dark:text-zinc-400 text-lg leading-relaxed">
-                <motion.p variants={itemVariants}>In a world of bloated templates and slow interfaces, I offer a return to craftsmanship. I believe that a website should be as technically stable as it is visually captivating.</motion.p>
-                <motion.p variants={itemVariants}>My approach combines modern JavaScript frameworks (React/Next.js) with timeless design principles. This ensures that every project I touch is future-proof and conversion-ready.</motion.p>
+                <motion.p variants={itemVariants}>
+                  {about.description}
+                </motion.p>
+                <motion.p variants={itemVariants}>
+                  {about.point2}
+                </motion.p>
               </div>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                <motion.div variants={itemVariants} className="p-10 rounded-[2.5rem] bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                  <span className="text-6xl font-black block mb-4 font-display text-zinc-950 dark:text-white">100</span>
-                  <span className="text-zinc-600 dark:text-zinc-500 font-bold uppercase tracking-[0.2em] text-[10px]">Lighthouse Scores</span>
+                  <span className="text-6xl font-black block mb-4 font-display text-zinc-950 dark:text-white">
+                    {about.engagementStat}
+                  </span>
+                  <span className="text-zinc-600 dark:text-zinc-500 font-bold uppercase tracking-[0.2em] text-[10px]">Technical Performance</span>
                </motion.div>
                <motion.div variants={itemVariants} className="p-10 rounded-[2.5rem] bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shadow-sm">
                   <span className="text-6xl font-black block mb-4 font-display text-zinc-950 dark:text-white">0%</span>
@@ -51,11 +69,20 @@ const About: React.FC = () => {
           >
              <div className="aspect-[4/5] rounded-[4rem] overflow-hidden grayscale hover:grayscale-0 transition-all duration-1000 border border-zinc-100 dark:border-zinc-800 group shadow-2xl">
                 <img 
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800" 
-                  alt="Khairul Ahsan" 
+                  src={about.imageMain || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800"} 
+                  alt="Ahsan" 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2s]"
                 />
              </div>
+             {about.imageSecondary && (
+               <motion.div 
+                 initial={{ opacity: 0, scale: 0.8 }}
+                 whileInView={{ opacity: 1, scale: 1 }}
+                 className="absolute -bottom-10 -left-10 w-48 h-48 rounded-[2.5rem] overflow-hidden border-8 border-white dark:border-zinc-950 shadow-2xl hidden md:block"
+               >
+                 <img src={about.imageSecondary} className="w-full h-full object-cover" />
+               </motion.div>
+             )}
           </motion.div>
         </motion.div>
 
