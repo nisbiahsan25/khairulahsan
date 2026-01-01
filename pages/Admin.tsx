@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchSiteData, saveSiteData } from '../services/apiService';
-import { SiteData, Experience, Project } from '../types';
-import { Save, Plus, Trash2, Layout, User, Briefcase, Image as ImageIcon, LogOut, CheckCircle, Upload, Globe, Activity, ShieldCheck, Key } from 'lucide-react';
+import { SiteData, Experience, Project, Category } from '../types';
+import { Save, Plus, Trash2, Layout, User, Briefcase, Image as ImageIcon, LogOut, CheckCircle, Upload, Globe, Activity, ShieldCheck, Key, Link as LinkIcon, Cpu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Admin: React.FC = () => {
@@ -54,6 +54,42 @@ const Admin: React.FC = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const addExperience = () => {
+    if (!data) return;
+    const newExp: Experience = {
+      id: Date.now().toString(),
+      company: 'New Company',
+      role: 'Role Name',
+      date: '2024 - Present',
+      tags: ['React', 'Design'],
+      highlight: false
+    };
+    setData({ ...data, experiences: [newExp, ...data.experiences] });
+  };
+
+  const removeExperience = (id: string) => {
+    if (!data) return;
+    setData({ ...data, experiences: data.experiences.filter(e => e.id !== id) });
+  };
+
+  const addProject = () => {
+    if (!data) return;
+    const newProj: Project = {
+      id: Date.now().toString(),
+      title: 'New Project',
+      category: 'Business',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800',
+      techStack: ['React', 'Tailwind'],
+      liveLink: 'https://'
+    };
+    setData({ ...data, projects: [newProj, ...data.projects] });
+  };
+
+  const removeProject = (id: string) => {
+    if (!data) return;
+    setData({ ...data, projects: data.projects.filter(p => p.id !== id) });
   };
 
   if (!data) return <div className="flex items-center justify-center min-h-screen font-black uppercase tracking-widest text-zinc-400">Synchronizing...</div>;
@@ -127,28 +163,279 @@ const Admin: React.FC = () => {
           </div>
 
           {/* Editor Area */}
-          <div className="lg:col-span-9 bg-zinc-50 p-12 rounded-[3.5rem] border border-zinc-100">
+          <div className="lg:col-span-9 bg-zinc-50 p-12 rounded-[3.5rem] border border-zinc-100 min-h-[600px]">
+            
+            {/* HERO TAB */}
             {activeTab === 'hero' && (
               <div className="space-y-12">
                 <header>
-                  <h3 className="text-3xl font-black tracking-tight mb-2">Visual Content</h3>
+                  <h3 className="text-3xl font-black tracking-tight mb-2">Home Display</h3>
                   <p className="text-zinc-500 text-sm font-medium">Control the first impression of your website.</p>
                 </header>
-                <div className="grid gap-8">
+                <div className="grid gap-10">
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-2">Main Headline</label>
+                    <textarea 
+                      className="w-full bg-white border border-zinc-200 p-8 rounded-3xl font-black text-4xl focus:outline-none focus:border-indigo-500 transition-all leading-tight"
+                      value={data.hero.headline}
+                      onChange={e => setData({...data, hero: {...data.hero, headline: e.target.value}})}
+                    />
+                  </div>
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-2">Subheadline</label>
+                    <input 
+                      className="w-full bg-white border border-zinc-200 p-6 rounded-3xl font-medium text-lg focus:outline-none"
+                      value={data.hero.subheadline}
+                      onChange={e => setData({...data, hero: {...data.hero, subheadline: e.target.value}})}
+                    />
+                  </div>
                   <div className="grid md:grid-cols-2 gap-8">
-                    <div>
-                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-3 block ml-2">Main Headline</label>
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-2">Projects Count</label>
                       <input 
-                        className="w-full bg-white border border-zinc-200 p-6 rounded-3xl font-black text-2xl focus:outline-none focus:border-indigo-500 transition-all"
-                        value={data.hero.headline}
-                        onChange={e => setData({...data, hero: {...data.hero, headline: e.target.value}})}
+                        type="number"
+                        className="w-full bg-white border border-zinc-200 p-6 rounded-3xl font-black text-2xl"
+                        value={data.hero.projectsCompleted}
+                        onChange={e => setData({...data, hero: {...data.hero, projectsCompleted: parseInt(e.target.value)}})}
                       />
+                    </div>
+                    <div className="space-y-4">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-2">Startups Raised</label>
+                      <input 
+                        type="number"
+                        className="w-full bg-white border border-zinc-200 p-6 rounded-3xl font-black text-2xl"
+                        value={data.hero.startupsRaised}
+                        onChange={e => setData({...data, hero: {...data.hero, startupsRaised: parseInt(e.target.value)}})}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-2">Hero Image</label>
+                    <div className="flex gap-6 items-center">
+                      <div className="w-32 h-32 rounded-3xl overflow-hidden border border-zinc-200 bg-white">
+                        <img src={data.hero.image} className="w-full h-full object-cover" />
+                      </div>
+                      <label className="cursor-pointer bg-white border border-zinc-200 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-zinc-100 transition-all">
+                        Change Image
+                        <input type="file" className="hidden" accept="image/*" onChange={e => handleImageUpload(e, (b) => setData({...data, hero: {...data.hero, image: b}}))} />
+                      </label>
                     </div>
                   </div>
                 </div>
               </div>
             )}
 
+            {/* IDENTITY (ABOUT) TAB */}
+            {activeTab === 'about' && (
+              <div className="space-y-12">
+                <header>
+                  <h3 className="text-3xl font-black tracking-tight mb-2">Identity</h3>
+                  <p className="text-zinc-500 text-sm font-medium">Define your brand story and core values.</p>
+                </header>
+                <div className="grid gap-10">
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-2">About Title</label>
+                    <input 
+                      className="w-full bg-white border border-zinc-200 p-6 rounded-3xl font-black text-2xl"
+                      value={data.about.title}
+                      onChange={e => setData({...data, about: {...data.about, title: e.target.value}})}
+                    />
+                  </div>
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-2">Description</label>
+                    <textarea 
+                      rows={4}
+                      className="w-full bg-white border border-zinc-200 p-8 rounded-3xl font-medium leading-relaxed"
+                      value={data.about.description}
+                      onChange={e => setData({...data, about: {...data.about, description: e.target.value}})}
+                    />
+                  </div>
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 block ml-2">Engagement Stat (%)</label>
+                    <input 
+                      className="w-full bg-white border border-zinc-200 p-6 rounded-3xl font-black text-2xl"
+                      value={data.about.engagementStat}
+                      onChange={e => setData({...data, about: {...data.about, engagementStat: e.target.value}})}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TIMELINE (EXPERIENCE) TAB */}
+            {activeTab === 'experience' && (
+              <div className="space-y-12">
+                <header className="flex justify-between items-end">
+                  <div>
+                    <h3 className="text-3xl font-black tracking-tight mb-2">Timeline</h3>
+                    <p className="text-zinc-500 text-sm font-medium">Manage your professional career highlights.</p>
+                  </div>
+                  <button 
+                    onClick={addExperience}
+                    className="flex items-center gap-2 bg-zinc-950 text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all"
+                  >
+                    <Plus size={14} /> Add Event
+                  </button>
+                </header>
+
+                <div className="space-y-6">
+                  {data.experiences.map((exp, idx) => (
+                    <div key={exp.id} className="bg-white p-8 rounded-[2.5rem] border border-zinc-100 group">
+                      <div className="flex justify-between items-start mb-6">
+                        <div className="grid md:grid-cols-3 gap-6 flex-grow">
+                          <div>
+                            <label className="text-[8px] font-black uppercase tracking-widest text-zinc-400 block mb-2">Company</label>
+                            <input 
+                              className="w-full bg-zinc-50 p-4 rounded-xl font-bold"
+                              value={exp.company}
+                              onChange={e => {
+                                const newExps = [...data.experiences];
+                                newExps[idx].company = e.target.value;
+                                setData({...data, experiences: newExps});
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[8px] font-black uppercase tracking-widest text-zinc-400 block mb-2">Role</label>
+                            <input 
+                              className="w-full bg-zinc-50 p-4 rounded-xl font-bold"
+                              value={exp.role}
+                              onChange={e => {
+                                const newExps = [...data.experiences];
+                                newExps[idx].role = e.target.value;
+                                setData({...data, experiences: newExps});
+                              }}
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[8px] font-black uppercase tracking-widest text-zinc-400 block mb-2">Date</label>
+                            <input 
+                              className="w-full bg-zinc-50 p-4 rounded-xl font-bold"
+                              value={exp.date}
+                              onChange={e => {
+                                const newExps = [...data.experiences];
+                                newExps[idx].date = e.target.value;
+                                setData({...data, experiences: newExps});
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => removeExperience(exp.id)}
+                          className="ml-4 p-4 text-zinc-300 hover:text-red-500 transition-colors"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* SHOWCASE (PROJECTS) TAB */}
+            {activeTab === 'projects' && (
+              <div className="space-y-12">
+                <header className="flex justify-between items-end">
+                  <div>
+                    <h3 className="text-3xl font-black tracking-tight mb-2">Showcase</h3>
+                    <p className="text-zinc-500 text-sm font-medium">Display your best digital engineering works.</p>
+                  </div>
+                  <button 
+                    onClick={addProject}
+                    className="flex items-center gap-2 bg-zinc-950 text-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-indigo-600 transition-all"
+                  >
+                    <Plus size={14} /> New Project
+                  </button>
+                </header>
+
+                <div className="grid gap-10">
+                  {data.projects.map((proj, idx) => (
+                    <div key={proj.id} className="bg-white p-10 rounded-[3rem] border border-zinc-100 shadow-sm relative overflow-hidden group">
+                      <div className="grid md:grid-cols-12 gap-10">
+                        <div className="md:col-span-4 space-y-4">
+                          <div className="aspect-video rounded-3xl overflow-hidden border border-zinc-100 relative">
+                            <img src={proj.image} className="w-full h-full object-cover" />
+                            <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
+                              <Upload className="text-white" />
+                              <input type="file" className="hidden" accept="image/*" onChange={e => handleImageUpload(e, (b) => {
+                                const newProjs = [...data.projects];
+                                newProjs[idx].image = b;
+                                setData({...data, projects: newProjs});
+                              })} />
+                            </label>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <LinkIcon size={14} className="text-zinc-400" />
+                            <input 
+                              placeholder="Live Link"
+                              className="text-[10px] font-bold w-full bg-zinc-50 p-2 rounded-lg"
+                              value={proj.liveLink}
+                              onChange={e => {
+                                const newProjs = [...data.projects];
+                                newProjs[idx].liveLink = e.target.value;
+                                setData({...data, projects: newProjs});
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div className="md:col-span-8 space-y-6">
+                          <div className="flex justify-between">
+                            <input 
+                              className="text-3xl font-black w-full bg-transparent focus:outline-none focus:border-b-2 focus:border-indigo-500"
+                              value={proj.title}
+                              onChange={e => {
+                                const newProjs = [...data.projects];
+                                newProjs[idx].title = e.target.value;
+                                setData({...data, projects: newProjs});
+                              }}
+                            />
+                            <button 
+                              onClick={() => removeProject(proj.id)}
+                              className="p-2 text-zinc-300 hover:text-red-500"
+                            >
+                              <Trash2 size={20} />
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <label className="text-[8px] font-black uppercase tracking-widest text-zinc-400 block mb-2">Category</label>
+                              <select 
+                                className="w-full bg-zinc-50 p-4 rounded-xl font-bold text-xs"
+                                value={proj.category}
+                                onChange={e => {
+                                  const newProjs = [...data.projects];
+                                  newProjs[idx].category = e.target.value as Category;
+                                  setData({...data, projects: newProjs});
+                                }}
+                              >
+                                {['Law', 'Medical', 'E-commerce', 'Business', 'Education', 'Personal'].map(c => (
+                                  <option key={c} value={c}>{c}</option>
+                                ))}
+                              </select>
+                            </div>
+                            <div>
+                              <label className="text-[8px] font-black uppercase tracking-widest text-zinc-400 block mb-2">Stack (Comma separated)</label>
+                              <input 
+                                className="w-full bg-zinc-50 p-4 rounded-xl font-bold text-xs"
+                                value={proj.techStack.join(', ')}
+                                onChange={e => {
+                                  const newProjs = [...data.projects];
+                                  newProjs[idx].techStack = e.target.value.split(',').map(s => s.trim());
+                                  setData({...data, projects: newProjs});
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* TRACKING TAB */}
             {activeTab === 'tracking' && (
               <div className="space-y-12">
                 <header>
@@ -210,13 +497,6 @@ const Admin: React.FC = () => {
                   </div>
                 </div>
               </div>
-            )}
-
-            {/* Other tabs like 'projects', 'about'... (Existing logic preserved) */}
-            {activeTab === 'projects' && (
-               <div className="space-y-12">
-                 {/* Project logic here */}
-               </div>
             )}
           </div>
         </div>
