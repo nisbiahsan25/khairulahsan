@@ -3,13 +3,20 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, MoveDown, ArrowRight, Terminal, Monitor, Cpu, Briefcase, Quote, Database, Figma, Code2 } from 'lucide-react';
 import { SiteData } from '../types';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 interface HomeProps {
   data: SiteData | null;
 }
 
 const Home: React.FC<HomeProps> = ({ data }) => {
+  const { scrollY } = useScroll();
+  
+  // Parallax transforms for Hero background elements
+  const y1 = useTransform(scrollY, [0, 500], [0, 200]);
+  const y2 = useTransform(scrollY, [0, 500], [0, -150]);
+  const rotate = useTransform(scrollY, [0, 1000], [0, 45]);
+
   if (!data) return null;
 
   const { hero, experiences, projects, testimonials } = data;
@@ -46,10 +53,27 @@ const Home: React.FC<HomeProps> = ({ data }) => {
     }
   ];
 
+  const sectionAnimation = {
+    initial: { opacity: 0, y: 40 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true, margin: "-100px" },
+    transition: { duration: 0.8, ease: [0.23, 1, 0.32, 1] }
+  };
+
   return (
     <div className="bg-white dark:bg-zinc-950 transition-colors overflow-x-hidden">
       {/* Hero Section */}
       <section className="relative min-h-screen pt-32 md:pt-40 px-6 md:px-10 flex items-center justify-center overflow-hidden">
+        {/* Parallax Background Decorative Elements */}
+        <motion.div 
+          style={{ y: y1, rotate }}
+          className="absolute top-20 -right-20 w-96 h-96 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none select-none"
+        />
+        <motion.div 
+          style={{ y: y2 }}
+          className="absolute bottom-40 -left-20 w-80 h-80 bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-[100px] pointer-events-none select-none"
+        />
+
         <div className="container mx-auto max-w-[1400px] grid lg:grid-cols-2 gap-12 lg:gap-10 items-center">
           <div className="relative z-20 order-2 lg:order-1">
             <motion.div 
@@ -124,21 +148,20 @@ const Home: React.FC<HomeProps> = ({ data }) => {
       </section>
 
       {/* Web Capabilities */}
-      <section className="py-24 md:py-40 px-6 md:px-10 bg-zinc-50 dark:bg-zinc-925 transition-colors">
+      <motion.section 
+        {...sectionAnimation}
+        className="py-24 md:py-40 px-6 md:px-10 bg-zinc-50 dark:bg-zinc-925 transition-colors"
+      >
         <div className="container mx-auto max-w-[1400px]">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <motion.div 
-               initial={{ opacity: 0, x: -30 }}
-               whileInView={{ opacity: 1, x: 0 }}
-               viewport={{ once: true }}
-            >
+            <div>
               <span className="text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-6 block">Capabilities</span>
               <h2 className="text-5xl md:text-8xl font-black mb-8 md:mb-10 leading-[0.9] dark:text-white">Precision Web <br/> Engineering.</h2>
               <p className="text-zinc-600 dark:text-zinc-400 text-lg md:text-xl font-medium mb-8 md:mb-12 max-w-lg">I build digital tools for brands that refuse to settle for templates. Every line of code is handwritten for performance and impact.</p>
               <Link to="/services" className="px-8 md:px-10 py-5 md:py-6 bg-white dark:bg-zinc-800 rounded-full font-black uppercase tracking-widest text-[10px] md:text-xs flex items-center gap-4 border border-zinc-200 dark:border-zinc-700 hover:shadow-xl transition-all w-fit dark:text-white">
                  View All Services <ArrowRight size={18} />
               </Link>
-            </motion.div>
+            </div>
 
             <div className="grid gap-6 md:gap-8">
                {webServices.map((s, idx) => (
@@ -147,7 +170,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
                    initial={{ opacity: 0, y: 30 }}
                    whileInView={{ opacity: 1, y: 0 }}
                    viewport={{ once: true }}
-                   transition={{ delay: idx * 0.2 }}
+                   transition={{ delay: idx * 0.2, duration: 0.6 }}
                    className="p-10 md:p-14 rounded-[2.5rem] md:rounded-[3.5rem] bg-zinc-950 text-white shadow-2xl border border-white/5 relative group overflow-hidden"
                  >
                    <div className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-2xl flex items-center justify-center mb-8 md:mb-10 shadow-sm transition-transform group-hover:-rotate-6">
@@ -166,10 +189,13 @@ const Home: React.FC<HomeProps> = ({ data }) => {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Technical Arsenal Section */}
-      <section className="py-24 md:py-40 px-6 md:px-10 dark:bg-zinc-950 transition-colors">
+      <motion.section 
+        {...sectionAnimation}
+        className="py-24 md:py-40 px-6 md:px-10 dark:bg-zinc-950 transition-colors"
+      >
         <div className="container mx-auto max-w-[1400px]">
           <div className="text-center mb-16 md:mb-24">
             <span className="text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-6 block">Technical Arsenal</span>
@@ -183,7 +209,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
+                transition={{ delay: idx * 0.1, duration: 0.6 }}
                 className="p-10 rounded-[3rem] bg-zinc-50 dark:bg-zinc-925 border border-zinc-100 dark:border-zinc-800 hover:shadow-2xl hover:bg-white dark:hover:bg-zinc-900 transition-all group"
               >
                 <div className="w-14 h-14 bg-white dark:bg-zinc-800 rounded-2xl flex items-center justify-center mb-8 border border-zinc-100 dark:border-zinc-700 shadow-sm transition-transform group-hover:scale-110">
@@ -201,10 +227,13 @@ const Home: React.FC<HomeProps> = ({ data }) => {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Career Timeline */}
-      <section className="py-24 md:py-40 px-6 md:px-10 dark:bg-zinc-950 transition-colors border-t border-zinc-100 dark:border-zinc-900">
+      <motion.section 
+        {...sectionAnimation}
+        className="py-24 md:py-40 px-6 md:px-10 dark:bg-zinc-950 transition-colors border-t border-zinc-100 dark:border-zinc-900"
+      >
         <div className="container mx-auto max-w-[1400px]">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-24 gap-10">
             <div className="max-w-2xl">
@@ -220,7 +249,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
+                transition={{ delay: idx * 0.1, duration: 0.6 }}
                 className="group p-8 md:p-14 rounded-[2.5rem] md:rounded-[4rem] bg-zinc-50 dark:bg-zinc-925 border border-zinc-100 dark:border-zinc-800 flex flex-col md:flex-row md:items-center justify-between hover:bg-white dark:hover:bg-zinc-900 transition-all hover:shadow-2xl"
               >
                 <div className="flex items-center gap-6 md:gap-10">
@@ -245,10 +274,13 @@ const Home: React.FC<HomeProps> = ({ data }) => {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Featured Works */}
-      <section className="py-24 md:py-40 px-6 md:px-10 bg-zinc-50 dark:bg-zinc-925 transition-colors">
+      <motion.section 
+        {...sectionAnimation}
+        className="py-24 md:py-40 px-6 md:px-10 bg-zinc-50 dark:bg-zinc-925 transition-colors"
+      >
         <div className="container mx-auto max-w-[1400px]">
           <div className="text-center mb-16 md:mb-24">
             <span className="text-[10px] uppercase font-bold text-zinc-400 mb-4 block tracking-[0.2em]">• Portfolio</span>
@@ -262,7 +294,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
+                transition={{ delay: idx * 0.1, duration: 0.8 }}
                 className="group relative rounded-[2.5rem] md:rounded-[3rem] overflow-hidden cursor-pointer shadow-xl"
               >
                 <div className="aspect-[4/5]">
@@ -287,10 +319,13 @@ const Home: React.FC<HomeProps> = ({ data }) => {
             ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Testimonials Section */}
-      <section className="py-24 md:py-40 px-6 md:px-10 bg-white dark:bg-zinc-950 transition-colors">
+      <motion.section 
+        {...sectionAnimation}
+        className="py-24 md:py-40 px-6 md:px-10 bg-white dark:bg-zinc-950 transition-colors"
+      >
         <div className="container mx-auto max-w-[1400px]">
           <div className="mb-16 md:mb-24">
              <span className="text-[10px] uppercase font-bold text-zinc-400 mb-4 block tracking-[0.2em]">• Social Proof</span>
@@ -303,7 +338,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
+                  transition={{ delay: idx * 0.1, duration: 0.6 }}
                   className="bg-zinc-50 dark:bg-zinc-925 p-8 md:p-16 rounded-[2.5rem] md:rounded-[4rem] border border-zinc-100 dark:border-zinc-800 relative group"
                 >
                    <Quote className="text-indigo-600/20 absolute top-8 md:top-12 right-8 md:right-12 w-12 h-12 md:w-20 md:h-20" />
@@ -323,10 +358,13 @@ const Home: React.FC<HomeProps> = ({ data }) => {
              ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* CTA */}
-      <section className="py-40 md:py-60 px-6 md:px-10 text-center dark:bg-zinc-900 transition-colors relative overflow-hidden">
+      <motion.section 
+        {...sectionAnimation}
+        className="py-40 md:py-60 px-6 md:px-10 text-center dark:bg-zinc-900 transition-colors relative overflow-hidden"
+      >
         <div className="container mx-auto max-w-[1400px] relative z-10">
           <motion.h2 
             initial={{ opacity: 0, scale: 0.9 }}
@@ -340,7 +378,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
             Schedule Discovery Call <ArrowUpRight size={28} className="md:w-10 md:h-10" />
           </Link>
         </div>
-      </section>
+      </motion.section>
     </div>
   );
 };
