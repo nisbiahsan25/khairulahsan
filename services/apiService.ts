@@ -142,6 +142,23 @@ const DEFAULT_DATA: SiteData = {
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"
     }
   ],
+  technicalSkills: [
+    {
+      category: "Interface Design",
+      icon: "Figma",
+      skills: ["UI/UX Strategy", "Prototyping", "Figma Systems", "Brand Identity", "Motion Design", "Adobe CC"]
+    },
+    {
+      category: "Frontend Engineering",
+      icon: "Code2",
+      skills: ["React & Next.js", "TypeScript", "Tailwind CSS", "GSAP Animations", "Performance Lab", "Redux Toolkit"]
+    },
+    {
+      category: "Backend & Systems",
+      icon: "Database",
+      skills: ["Node.js / Express", "PostgreSQL", "MongoDB", "Cloud Architecture", "RESTful APIs", "Docker"]
+    }
+  ],
   blogs: []
 };
 
@@ -151,12 +168,9 @@ export const fetchSiteData = async (): Promise<SiteData> => {
     if (response.ok) {
       const data = await response.json();
       if (data && !data.error) {
-        if (!data.categories) {
-           data.categories = DEFAULT_DATA.categories;
-        }
-        if (!data.testimonials) {
-           data.testimonials = DEFAULT_DATA.testimonials;
-        }
+        if (!data.categories) data.categories = DEFAULT_DATA.categories;
+        if (!data.testimonials) data.testimonials = DEFAULT_DATA.testimonials;
+        if (!data.technicalSkills) data.technicalSkills = DEFAULT_DATA.technicalSkills;
         return data;
       }
     }

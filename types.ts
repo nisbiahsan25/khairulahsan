@@ -44,6 +44,12 @@ export interface Service {
   icon: string;
 }
 
+export interface SkillCategory {
+  category: string;
+  icon: string;
+  skills: string[];
+}
+
 export interface SiteData {
   hero: {
     headline: string;
@@ -72,4 +78,5 @@ export interface SiteData {
   projects: Project[];
   blogs: BlogPost[];
   testimonials: Testimonial[];
+  technicalSkills?: SkillCategory[];
 }

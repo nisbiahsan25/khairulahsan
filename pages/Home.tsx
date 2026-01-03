@@ -9,6 +9,15 @@ interface HomeProps {
   data: SiteData | null;
 }
 
+const IconMapper: Record<string, React.ReactNode> = {
+  Figma: <Figma className="text-pink-500" />,
+  Code2: <Code2 className="text-blue-500" />,
+  Database: <Database className="text-emerald-500" />,
+  Terminal: <Terminal className="text-indigo-600" />,
+  Monitor: <Monitor className="text-purple-600" />,
+  Cpu: <Cpu className="text-zinc-900" />,
+};
+
 const Home: React.FC<HomeProps> = ({ data }) => {
   const { scrollY } = useScroll();
   
@@ -19,26 +28,8 @@ const Home: React.FC<HomeProps> = ({ data }) => {
 
   if (!data) return null;
 
-  const { hero, experiences, projects, testimonials } = data;
+  const { hero, experiences, projects, testimonials, technicalSkills = [] } = data;
   const titleWords = hero.headline.split(" ");
-
-  const technicalSkills = [
-    {
-      category: "Interface Design",
-      icon: <Figma className="text-pink-500" />,
-      skills: ["UI/UX Strategy", "Prototyping", "Figma Systems", "Brand Identity", "Motion Design", "Adobe CC"]
-    },
-    {
-      category: "Frontend Engineering",
-      icon: <Code2 className="text-blue-500" />,
-      skills: ["React & Next.js", "TypeScript", "Tailwind CSS", "GSAP Animations", "Performance Lab", "Redux Toolkit"]
-    },
-    {
-      category: "Backend & Systems",
-      icon: <Database className="text-emerald-500" />,
-      skills: ["Node.js / Express", "PostgreSQL", "MongoDB", "Cloud Architecture", "RESTful APIs", "Docker"]
-    }
-  ];
 
   const webServices = [
     {
@@ -213,7 +204,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
                 className="p-10 rounded-[3rem] bg-zinc-50 dark:bg-zinc-925 border border-zinc-100 dark:border-zinc-800 hover:shadow-2xl hover:bg-white dark:hover:bg-zinc-900 transition-all group"
               >
                 <div className="w-14 h-14 bg-white dark:bg-zinc-800 rounded-2xl flex items-center justify-center mb-8 border border-zinc-100 dark:border-zinc-700 shadow-sm transition-transform group-hover:scale-110">
-                  {cat.icon}
+                  {IconMapper[cat.icon] || <Cpu size={24} />}
                 </div>
                 <h3 className="text-2xl font-black mb-8 dark:text-white font-display uppercase tracking-wider">{cat.category}</h3>
                 <div className="flex flex-wrap gap-2">

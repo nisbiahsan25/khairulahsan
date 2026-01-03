@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchSiteData, saveSiteData } from '../services/apiService';
-import { SiteData, Experience, Project, Category, Testimonial } from '../types';
-import { Save, Plus, Trash2, Layout, User, Briefcase, Image as ImageIcon, LogOut, CheckCircle, Upload, Activity, ShieldCheck, Link as LinkIcon, Tag, X, Key, Zap, MessageSquareQuote } from 'lucide-react';
+import { SiteData, Experience, Project, Category, Testimonial, SkillCategory } from '../types';
+import { Save, Plus, Trash2, Layout, User, Briefcase, Image as ImageIcon, LogOut, CheckCircle, Upload, Activity, ShieldCheck, Link as LinkIcon, Tag, X, Key, Zap, MessageSquareQuote, Cpu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface AdminProps {
@@ -12,10 +12,9 @@ interface AdminProps {
 
 const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
   const [data, setData] = useState<SiteData | null>(null);
-  const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'experience' | 'projects' | 'tracking' | 'testimonials'>('hero');
+  const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'experience' | 'projects' | 'tracking' | 'testimonials' | 'skills'>('hero');
   const [saving, setSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -115,6 +114,23 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
     setData({ ...data, projects: data.projects.filter(p => p.id !== id) });
   };
 
+  const addSkillCategory = () => {
+    if (!data) return;
+    const newCat: SkillCategory = {
+      category: "New Tech Stack",
+      icon: "Cpu",
+      skills: ["Skill 1", "Skill 2"]
+    };
+    setData({ ...data, technicalSkills: [...(data.technicalSkills || []), newCat] });
+  };
+
+  const removeSkillCategory = (index: number) => {
+    if (!data || !data.technicalSkills) return;
+    const newSkills = [...data.technicalSkills];
+    newSkills.splice(index, 1);
+    setData({ ...data, technicalSkills: newSkills });
+  };
+
   if (!data) return <div className="flex items-center justify-center min-h-screen font-black uppercase tracking-widest text-zinc-400">Synchronizing...</div>;
 
   return (
@@ -164,6 +180,7 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
             {[
               { id: 'hero', label: 'Hero Display', icon: <Layout size={18}/> },
               { id: 'about', label: 'About Identity', icon: <User size={18}/> },
+              { id: 'skills', label: 'Technical Mastery', icon: <Cpu size={18}/> },
               { id: 'experience', label: 'Career Timeline', icon: <Briefcase size={18}/> },
               { id: 'projects', label: 'Portfolio', icon: <ImageIcon size={18}/> },
               { id: 'testimonials', label: 'Testimonials', icon: <MessageSquareQuote size={18}/> },
@@ -202,17 +219,64 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
                       onChange={e => setData({...data, hero: {...data.hero, headline: e.target.value}})}
                     />
                   </div>
-                  <div className="grid md:grid-cols-2 gap-8">
-                    <div className="space-y-4">
-                      <label className="text-[11px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 block ml-2">Projects Completed</label>
-                      <input 
-                        type="number"
-                        className="w-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 p-6 rounded-3xl font-black text-2xl dark:text-white"
-                        value={data.hero.projectsCompleted}
-                        onChange={e => setData({...data, hero: {...data.hero, projectsCompleted: parseInt(e.target.value)}})}
-                      />
-                    </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'skills' && (
+              <div className="space-y-12">
+                <header className="flex justify-between items-end">
+                  <div>
+                    <h3 className="text-3xl font-black tracking-tight mb-2 dark:text-white">Technical Mastery</h3>
+                    <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">Edit categories and skill lists for the Core Mastery section.</p>
                   </div>
+                  <button onClick={addSkillCategory} className="flex items-center gap-2 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-6 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-lg hover:bg-indigo-600 transition-all"><Plus size={16} /> Add Category</button>
+                </header>
+                <div className="grid gap-8">
+                  {data.technicalSkills && data.technicalSkills.map((cat, idx) => (
+                    <div key={idx} className="bg-white dark:bg-zinc-800/50 p-10 rounded-[3rem] border border-zinc-100 dark:border-zinc-700 relative group">
+                       <button onClick={() => removeSkillCategory(idx)} className="absolute top-8 right-8 text-zinc-300 hover:text-red-500"><Trash2 size={20} /></button>
+                       <div className="grid md:grid-cols-2 gap-10">
+                          <div className="space-y-6">
+                             <div className="space-y-2">
+                               <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Category Name</label>
+                               <input className="w-full bg-zinc-50 dark:bg-zinc-900 p-5 rounded-2xl font-black text-lg dark:text-white" value={cat.category} onChange={e => {
+                                  const newSkills = [...(data.technicalSkills || [])];
+                                  newSkills[idx].category = e.target.value;
+                                  setData({...data, technicalSkills: newSkills});
+                               }} />
+                             </div>
+                             <div className="space-y-2">
+                               <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Icon Key (Figma, Code2, Database, Terminal, Monitor)</label>
+                               <select className="w-full bg-zinc-50 dark:bg-zinc-900 p-5 rounded-2xl font-bold text-xs dark:text-white" value={cat.icon} onChange={e => {
+                                  const newSkills = [...(data.technicalSkills || [])];
+                                  newSkills[idx].icon = e.target.value;
+                                  setData({...data, technicalSkills: newSkills});
+                               }}>
+                                  <option value="Figma">Figma</option>
+                                  <option value="Code2">Code2</option>
+                                  <option value="Database">Database</option>
+                                  <option value="Terminal">Terminal</option>
+                                  <option value="Monitor">Monitor</option>
+                               </select>
+                             </div>
+                          </div>
+                          <div className="space-y-4">
+                             <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Skills (Comma separated)</label>
+                             <textarea 
+                               rows={4} 
+                               className="w-full bg-zinc-50 dark:bg-zinc-900 p-6 rounded-3xl font-medium text-sm dark:text-white resize-none"
+                               value={cat.skills.join(', ')}
+                               onChange={e => {
+                                  const newSkills = [...(data.technicalSkills || [])];
+                                  newSkills[idx].skills = e.target.value.split(',').map(s => s.trim()).filter(s => s !== '');
+                                  setData({...data, technicalSkills: newSkills});
+                               }}
+                             />
+                          </div>
+                       </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -240,54 +304,6 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
                       value={data.about.description}
                       onChange={e => setData({...data, about: {...data.about, description: e.target.value}})}
                     />
-                  </div>
-                  <div className="grid md:grid-cols-2 gap-8">
-                     <div className="space-y-4">
-                        <label className="text-[11px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 block ml-2">Performance Stat (%)</label>
-                        <input 
-                          className="w-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 p-6 rounded-3xl font-black text-xl dark:text-white"
-                          value={data.about.engagementStat}
-                          onChange={e => setData({...data, about: {...data.about, engagementStat: e.target.value}})}
-                        />
-                     </div>
-                     <div className="space-y-4">
-                        <label className="text-[11px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 block ml-2">Core Point 1</label>
-                        <input 
-                          className="w-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 p-6 rounded-3xl font-bold text-sm dark:text-white"
-                          value={data.about.point1}
-                          onChange={e => setData({...data, about: {...data.about, point1: e.target.value}})}
-                        />
-                     </div>
-                     <div className="space-y-4 md:col-span-2">
-                        <label className="text-[11px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 block ml-2">Core Point 2</label>
-                        <textarea 
-                          rows={2}
-                          className="w-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 p-6 rounded-3xl font-bold text-sm dark:text-white"
-                          value={data.about.point2}
-                          onChange={e => setData({...data, about: {...data.about, point2: e.target.value}})}
-                        />
-                     </div>
-                  </div>
-                  <div className="space-y-4">
-                    <label className="text-[11px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 block ml-2">Images</label>
-                    <div className="flex gap-10">
-                       <div className="flex flex-col gap-4 items-center">
-                          <div className="w-32 h-40 bg-zinc-200 dark:bg-zinc-800 rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-700">
-                             <img src={data.about.imageMain} className="w-full h-full object-cover" />
-                          </div>
-                          <label className="cursor-pointer text-[10px] font-black uppercase tracking-widest text-indigo-600">
-                             Main Img <input type="file" className="hidden" onChange={e => handleImageUpload(e, (b) => setData({...data, about: {...data.about, imageMain: b}}))} />
-                          </label>
-                       </div>
-                       <div className="flex flex-col gap-4 items-center">
-                          <div className="w-32 h-40 bg-zinc-200 dark:bg-zinc-800 rounded-3xl overflow-hidden border border-zinc-200 dark:border-zinc-700">
-                             <img src={data.about.imageSecondary} className="w-full h-full object-cover" />
-                          </div>
-                          <label className="cursor-pointer text-[10px] font-black uppercase tracking-widest text-indigo-600">
-                             Secondary Img <input type="file" className="hidden" onChange={e => handleImageUpload(e, (b) => setData({...data, about: {...data.about, imageSecondary: b}}))} />
-                          </label>
-                       </div>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -318,19 +334,8 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
                                 newTests[idx].role = e.target.value;
                                 setData({...data, testimonials: newTests});
                              }} />
-                             <div className="flex gap-4 items-center">
-                                <div className="w-16 h-16 rounded-full bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
-                                   <img src={test.avatar} className="w-full h-full object-cover" />
-                                </div>
-                                <label className="cursor-pointer text-[10px] font-black uppercase text-indigo-600">Change Avatar <input type="file" className="hidden" onChange={e => handleImageUpload(e, (b) => {
-                                   const newT = [...data.testimonials];
-                                   newT[idx].avatar = b;
-                                   setData({...data, testimonials: newT});
-                                })} /></label>
-                             </div>
                           </div>
                           <div className="space-y-4">
-                             <label className="text-[11px] font-black uppercase tracking-widest text-zinc-400">Feedback Content</label>
                              <textarea 
                                rows={6} 
                                className="w-full bg-zinc-50 dark:bg-zinc-900 p-6 rounded-3xl font-medium text-sm dark:text-white resize-none"
@@ -352,55 +357,16 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
             {activeTab === 'tracking' && (
               <div className="space-y-12">
                 <header>
-                  <div className="flex items-center gap-4 mb-2">
-                    <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 rounded-xl flex items-center justify-center">
-                       <ShieldCheck size={20} />
-                    </div>
-                    <h3 className="text-3xl font-black tracking-tight dark:text-white">Ads & Analytics</h3>
-                  </div>
+                  <h3 className="text-3xl font-black tracking-tight dark:text-white">Ads & Analytics</h3>
                   <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">Configure Meta Pixel and Conversions API (CAPI).</p>
                 </header>
-                
                 <div className="grid gap-10">
-                  <div className="bg-white dark:bg-zinc-800/50 p-10 rounded-[3rem] border border-zinc-100 dark:border-zinc-700 space-y-10">
-                    <div className="space-y-4">
-                       <label className="text-[11px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 block ml-2">Meta Pixel ID</label>
-                       <input 
-                        className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-6 rounded-3xl font-mono text-sm dark:text-white focus:border-indigo-500 outline-none transition-all"
-                        placeholder="e.g. 123456789"
-                        value={data.tracking?.pixelId || ''}
-                        onChange={e => setData({...data, tracking: {...(data.tracking || {pixelId: '', capiToken: ''}), pixelId: e.target.value}})}
-                       />
-                    </div>
-
-                    <div className="space-y-4">
-                       <div className="flex items-center gap-2 ml-2">
-                          <Key size={14} className="text-indigo-600" />
-                          <label className="text-[11px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 block">CAPI Access Token</label>
-                       </div>
-                       <textarea 
-                        rows={3}
-                        className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-6 rounded-3xl font-mono text-xs dark:text-white focus:border-indigo-500 outline-none transition-all"
-                        placeholder="EAAB..."
-                        value={data.tracking?.capiToken || ''}
-                        onChange={e => setData({...data, tracking: {...(data.tracking || {pixelId: '', capiToken: ''}), capiToken: e.target.value}})}
-                       />
-                    </div>
-
-                    <div className="space-y-4">
-                       <div className="flex items-center gap-2 ml-2">
-                          <Zap size={14} className="text-amber-600" />
-                          <label className="text-[11px] font-black uppercase tracking-widest text-zinc-600 dark:text-zinc-400 block">Test Event Code</label>
-                       </div>
-                       <input 
-                        className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-6 rounded-3xl font-mono text-sm dark:text-white focus:border-indigo-500 outline-none transition-all"
-                        placeholder="TEST12345"
-                        value={data.tracking?.testEventCode || ''}
-                        onChange={e => setData({...data, tracking: {...(data.tracking || {pixelId: '', capiToken: ''}), testEventCode: e.target.value}})}
-                       />
-                       <p className="text-[10px] text-zinc-500 font-medium ml-4 uppercase tracking-widest">Only use this while testing events in Events Manager.</p>
-                    </div>
-                  </div>
+                   <input 
+                    className="w-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-6 rounded-3xl font-mono text-sm dark:text-white focus:border-indigo-500 outline-none transition-all"
+                    placeholder="Pixel ID"
+                    value={data.tracking?.pixelId || ''}
+                    onChange={e => setData({...data, tracking: {...(data.tracking || {pixelId: '', capiToken: ''}), pixelId: e.target.value}})}
+                   />
                 </div>
               </div>
             )}
@@ -410,86 +376,39 @@ const Admin: React.FC<AdminProps> = ({ onSaveSuccess }) => {
                  <header className="flex justify-between items-end">
                    <div>
                      <h3 className="text-3xl font-black tracking-tight mb-2 dark:text-white">Career Graph</h3>
-                     <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">Manage your professional milestones.</p>
+                     <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">Manage milestones.</p>
                    </div>
                    <button onClick={addExperience} className="flex items-center gap-2 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-6 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-lg hover:bg-indigo-600 transition-all"><Plus size={16} /> Add Experience</button>
                  </header>
-                 <div className="space-y-8">
-                   {data.experiences.map((exp, idx) => (
-                     <div key={exp.id} className="bg-white dark:bg-zinc-800/50 p-8 rounded-[3rem] border border-zinc-100 dark:border-zinc-700 relative">
-                        <button onClick={() => removeExperience(exp.id)} className="absolute top-8 right-8 text-zinc-300 hover:text-red-500"><Trash2 size={20} /></button>
-                        <div className="grid md:grid-cols-3 gap-6">
-                           <input placeholder="Company" className="w-full bg-zinc-50 dark:bg-zinc-900 p-5 rounded-2xl font-black dark:text-white" value={exp.company} onChange={e => {
-                              const newExps = [...data.experiences];
-                              newExps[idx].company = e.target.value;
-                              setData({...data, experiences: newExps});
-                           }} />
-                           <input placeholder="Role" className="w-full bg-zinc-50 dark:bg-zinc-900 p-5 rounded-2xl font-black dark:text-white" value={exp.role} onChange={e => {
-                              const newExps = [...data.experiences];
-                              newExps[idx].role = e.target.value;
-                              setData({...data, experiences: newExps});
-                           }} />
-                           <input placeholder="Date" className="w-full bg-zinc-50 dark:bg-zinc-900 p-5 rounded-2xl font-black dark:text-white" value={exp.date} onChange={e => {
-                              const newExps = [...data.experiences];
-                              newExps[idx].date = e.target.value;
-                              setData({...data, experiences: newExps});
-                           }} />
-                        </div>
-                     </div>
-                   ))}
-                 </div>
+                 {data.experiences.map((exp, idx) => (
+                   <div key={exp.id} className="bg-white dark:bg-zinc-800/50 p-8 rounded-[3rem] border border-zinc-100 dark:border-zinc-700 relative">
+                      <button onClick={() => removeExperience(exp.id)} className="absolute top-8 right-8 text-zinc-300 hover:text-red-500"><Trash2 size={20} /></button>
+                      <input className="w-full bg-zinc-50 dark:bg-zinc-900 p-5 rounded-2xl font-black dark:text-white mb-4" value={exp.company} onChange={e => {
+                        const newExps = [...data.experiences];
+                        newExps[idx].company = e.target.value;
+                        setData({...data, experiences: newExps});
+                      }} />
+                   </div>
+                 ))}
                </div>
             )}
 
             {activeTab === 'projects' && (
                <div className="space-y-12">
                  <header className="flex justify-between items-end">
-                   <div>
-                     <h3 className="text-3xl font-black tracking-tight mb-2 dark:text-white">Portfolio Showcase</h3>
-                     <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium">Display your engineering masterpieces.</p>
-                   </div>
+                   <h3 className="text-3xl font-black tracking-tight mb-2 dark:text-white">Portfolio</h3>
                    <button onClick={addProject} className="flex items-center gap-2 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-6 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-lg hover:bg-indigo-600 transition-all"><Plus size={16} /> New Project</button>
                  </header>
-                 <div className="grid gap-8">
-                   {data.projects.map((proj, idx) => (
-                     <div key={proj.id} className="bg-white dark:bg-zinc-800/50 p-8 rounded-[3rem] border border-zinc-100 dark:border-zinc-700 relative">
-                        <button onClick={() => removeProject(proj.id)} className="absolute top-8 right-8 text-zinc-300 hover:text-red-500"><Trash2 size={20} /></button>
-                        <div className="grid md:grid-cols-2 gap-8">
-                           <div className="space-y-4">
-                              <input placeholder="Project Title" className="w-full bg-zinc-50 dark:bg-zinc-900 p-5 rounded-2xl font-black text-xl dark:text-white" value={proj.title} onChange={e => {
-                                 const newProjs = [...data.projects];
-                                 newProjs[idx].title = e.target.value;
-                                 setData({...data, projects: newProjs});
-                              }} />
-                              <select className="w-full bg-zinc-50 dark:bg-zinc-900 p-5 rounded-2xl font-bold text-xs dark:text-white" value={proj.category} onChange={e => {
-                                 const newProjs = [...data.projects];
-                                 newProjs[idx].category = e.target.value;
-                                 setData({...data, projects: newProjs});
-                              }}>
-                                 {data.categories.map(c => <option key={c} value={c}>{c}</option>)}
-                              </select>
-                           </div>
-                           <div className="space-y-4">
-                              <input placeholder="Live Link" className="w-full bg-zinc-50 dark:bg-zinc-900 p-5 rounded-2xl font-mono text-xs dark:text-white" value={proj.liveLink} onChange={e => {
-                                 const newProjs = [...data.projects];
-                                 newProjs[idx].liveLink = e.target.value;
-                                 setData({...data, projects: newProjs});
-                              }} />
-                              <div className="flex gap-4 items-center">
-                                 <div className="w-20 h-20 rounded-2xl bg-zinc-100 dark:bg-zinc-900 overflow-hidden">
-                                    <img src={proj.image} className="w-full h-full object-cover" />
-                                 </div>
-                                 <label className="cursor-pointer text-[10px] font-black uppercase text-indigo-600">Change Img <input type="file" className="hidden" onChange={e => handleImageUpload(e, (b) => {
-                                    const newP = [...data.projects];
-                                    newP[idx].image = b;
-                                    setData({...data, projects: newP});
-                                 })} /></label>
-                              </div>
-                           </div>
-                        </div>
-                    </div>
-                   ))}
-                 </div>
+                 {data.projects.map((proj, idx) => (
+                   <div key={proj.id} className="bg-white dark:bg-zinc-800/50 p-8 rounded-[3rem] border border-zinc-100 dark:border-zinc-700 relative">
+                      <button onClick={() => removeProject(proj.id)} className="absolute top-8 right-8 text-zinc-300 hover:text-red-500"><Trash2 size={20} /></button>
+                      <input className="w-full bg-zinc-50 dark:bg-zinc-900 p-5 rounded-2xl font-black dark:text-white" value={proj.title} onChange={e => {
+                        const newProjs = [...data.projects];
+                        newProjs[idx].title = e.target.value;
+                        setData({...data, projects: newProjs});
+                      }} />
+                   </div>
+                 ))}
                </div>
             )}
           </div>
