@@ -19,7 +19,7 @@
             colors: {
               zinc: {
                 950: '#09090b',
-                925: '#121215', // Slightly lighter than 950 for better card contrast
+                925: '#121215', 
               }
             }
           },
@@ -27,7 +27,6 @@
       }
     </script>
     <script>
-      // Apply theme before page load
       if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
       } else {
@@ -38,7 +37,6 @@
     <style>
       :root {
         --accent: #111111;
-        scroll-behavior: smooth;
       }
       body {
         font-family: 'Plus Jakarta Sans', sans-serif;
@@ -49,7 +47,7 @@
       }
       .dark body {
         background-color: #09090b;
-        color: #e4e4e7; /* Lighter text for better contrast */
+        color: #e4e4e7;
       }
       h1, h2, h3, h4, .font-display {
         font-family: 'Plus Jakarta Sans', sans-serif;
