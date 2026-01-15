@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, MoveDown, ArrowRight, Terminal, Monitor, Cpu, Briefcase, Quote, Database, Figma, Code2 } from 'lucide-react';
+import { ArrowUpRight, MoveDown, ArrowRight, Terminal, Monitor, Cpu, Briefcase, Quote, Database, Figma, Code2, Target } from 'lucide-react';
 import { SiteData } from '../types';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
@@ -26,7 +26,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
 
   if (!data) return null;
 
-  const { hero, experiences, projects, testimonials, technicalSkills = [] } = data;
+  const { hero, experiences, projects, testimonials, technicalSkills = [], niches = [] } = data;
   const titleWords = hero.headline.split(" ");
 
   const webServices = [
@@ -54,7 +54,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
       {/* Hero Section */}
       <section className="relative min-h-[85vh] pt-32 md:pt-40 px-6 md:px-10 flex items-center justify-center overflow-hidden">
         
-        {/* Abstract Background Animation - Optimized for performance */}
+        {/* Abstract Background Animation */}
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" style={{ willChange: 'transform' }}>
           <motion.div 
             animate={{ 
@@ -152,6 +152,37 @@ const Home: React.FC<HomeProps> = ({ data }) => {
           </motion.div>
         </div>
       </section>
+
+      {/* Specialized Niches Section */}
+      <motion.section 
+        {...sectionAnimation}
+        className="py-16 md:py-24 px-6 md:px-10 dark:bg-zinc-950 transition-colors"
+      >
+        <div className="container mx-auto max-w-[1400px]">
+          <div className="mb-16">
+            <span className="text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-[0.3em] text-[10px] mb-6 block">Industry Specialization</span>
+            <h2 className="text-5xl md:text-7xl font-black dark:text-white tracking-tighter">Focused Niches.</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {niches.map((n, idx) => (
+              <motion.div
+                key={n.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.05, duration: 0.3 }}
+                className="p-10 rounded-[2.5rem] bg-zinc-50 dark:bg-zinc-925 border border-zinc-100 dark:border-zinc-800 hover:bg-white dark:hover:bg-zinc-900 transition-all group"
+              >
+                <div className="w-12 h-12 bg-indigo-600/10 rounded-xl flex items-center justify-center mb-8 group-hover:bg-indigo-600 group-hover:text-white transition-all text-indigo-600">
+                  <Target size={24} />
+                </div>
+                <h3 className="text-2xl font-black mb-4 dark:text-white uppercase tracking-tighter">{n.title}</h3>
+                <p className="text-zinc-500 dark:text-zinc-400 text-sm font-medium leading-relaxed">{n.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
 
       {/* Web Capabilities */}
       <motion.section 

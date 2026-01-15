@@ -42,15 +42,13 @@ const DEFAULT_DATA: SiteData = {
       date: "2022 - 2024",
       tags: ["Figma", "Interaction Design", "SCSS"],
       highlight: false
-    },
-    {
-      id: "exp-3",
-      company: "Webflow Agency",
-      role: "Frontend Developer",
-      date: "2020 - 2022",
-      tags: ["React", "Animations", "API Integration"],
-      highlight: false
     }
+  ],
+  niches: [
+    { id: "n1", title: "Real Estate", description: "High-end property portals and automated lead systems for luxury agencies." },
+    { id: "n2", title: "Law Firms", description: "Authoritative digital presences for top-tier legal practices with secure client portals." },
+    { id: "n3", title: "SaaS Startups", description: "Scalable product interfaces and high-converting marketing engines for tech founders." },
+    { id: "n4", title: "E-commerce", description: "Bespoke online stores optimized for performance and conversion." }
   ],
   services: [
     {
@@ -80,22 +78,6 @@ const DEFAULT_DATA: SiteData = {
       image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
       techStack: ["React", "Redux", "Tailwind"],
       liveLink: "https://example.com"
-    },
-    {
-      id: "p2",
-      title: "Luxury E-Shop",
-      category: "E-commerce",
-      image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=800",
-      techStack: ["Next.js", "Stripe", "Prisma"],
-      liveLink: "https://example.com"
-    },
-    {
-      id: "p3",
-      title: "Innovate SaaS",
-      category: "SaaS Interface",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800",
-      techStack: ["Node.js", "Express", "MongoDB"],
-      liveLink: "https://example.com"
     }
   ],
   testimonials: [
@@ -103,79 +85,39 @@ const DEFAULT_DATA: SiteData = {
       id: "t1",
       name: "Marcus Thorne",
       role: "CTO, NexaCorp",
-      content: "The frontend engineering was impeccable. Our Lighthouse scores jumped from 40 to 100 instantly, significantly reducing our customer bounce rate.",
+      content: "The frontend engineering was impeccable. Our Lighthouse scores jumped from 40 to 100 instantly.",
       avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200"
-    },
-    {
-      id: "t2",
-      name: "Sarah Jenkins",
-      role: "Lead Designer, Bloom Digital",
-      content: "A masterclass in React development. They took our complex design specs and turned them into a fluid, pixel-perfect web application that feels premium.",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=200"
-    },
-    {
-      id: "t3",
-      name: "Julian Vane",
-      role: "Head of Tech, Vane SaaS",
-      content: "Finding a developer who understands both aesthetic UI and scalable system architecture is rare. The clean code and API structure were world-class.",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200"
-    },
-    {
-      id: "t4",
-      name: "Elena Rodriguez",
-      role: "E-commerce Director",
-      content: "The Next.js optimization they implemented for our store was a game changer. Site load times are under 1 second, and our mobile conversion has doubled.",
-      avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200"
-    },
-    {
-      id: "t5",
-      name: "David Chen",
-      role: "Founder, TechFlow Systems",
-      content: "Elite-level fullstack work. The custom dashboard they developed handles our data complex logic effortlessly while maintaining a sleek, modern user interface.",
-      avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200"
-    },
-    {
-      id: "t6",
-      name: "Sophia Wright",
-      role: "Product Manager, Luxe Web",
-      content: "The GSAP animations and motion design provided a level of polish we didn't think was possible on the web. It truly set our brand apart from competitors.",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200"
     }
   ],
   technicalSkills: [
     {
-      category: "Interface Design",
-      icon: "Figma",
-      skills: ["UI/UX Strategy", "Prototyping", "Figma Systems", "Brand Identity", "Motion Design", "Adobe CC"]
-    },
-    {
       category: "Frontend Engineering",
       icon: "Code2",
-      skills: ["React & Next.js", "TypeScript", "Tailwind CSS", "GSAP Animations", "Performance Lab", "Redux Toolkit"]
-    },
-    {
-      category: "Backend & Systems",
-      icon: "Database",
-      skills: ["Node.js / Express", "PostgreSQL", "MongoDB", "Cloud Architecture", "RESTful APIs", "Docker"]
+      skills: ["React & Next.js", "TypeScript", "Tailwind CSS"]
     }
   ],
   blogs: []
 };
 
 export const fetchSiteData = async (): Promise<SiteData> => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 1500); // 1.5s timeout for faster loading
+
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(API_URL, { signal: controller.signal });
+    clearTimeout(timeoutId);
     if (response.ok) {
       const data = await response.json();
       if (data && !data.error) {
-        if (!data.categories) data.categories = DEFAULT_DATA.categories;
-        if (!data.testimonials) data.testimonials = DEFAULT_DATA.testimonials;
-        if (!data.technicalSkills) data.technicalSkills = DEFAULT_DATA.technicalSkills;
-        return data;
+        return {
+          ...DEFAULT_DATA,
+          ...data,
+          niches: data.niches || DEFAULT_DATA.niches,
+        };
       }
     }
   } catch (e) {
-    console.warn("Server fetch failed, using default data.", e);
+    console.warn("Server fetch timed out or failed, using local defaults for speed.", e);
   }
   return DEFAULT_DATA;
 };

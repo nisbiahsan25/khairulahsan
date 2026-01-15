@@ -10,6 +10,12 @@ export interface Experience {
   highlight?: boolean;
 }
 
+export interface Niche {
+  id: string;
+  title: string;
+  description: string;
+}
+
 export interface Testimonial {
   id: string;
   name: string;
@@ -79,4 +85,5 @@ export interface SiteData {
   blogs: BlogPost[];
   testimonials: Testimonial[];
   technicalSkills?: SkillCategory[];
+  niches?: Niche[];
 }
