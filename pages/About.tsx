@@ -12,9 +12,10 @@ const About: React.FC<AboutProps> = ({ data }) => {
   if (!data) return null;
   const { about } = data;
 
+  // Fix: added 'as const' to ease to ensure it's treated as a specific literal string for framer-motion compatibility
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } }
   };
 
   return (

@@ -3,31 +3,21 @@ import React from 'react';
 import { Terminal, Monitor, Cpu, Globe, Layers, ArrowRight, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Service } from '../types';
 
-const Services: React.FC = () => {
-  const detailedServices = [
-    {
-      title: "Frontend Engineering",
-      icon: <Cpu className="text-indigo-600" />,
-      features: ["React & Next.js Architecture", "GSAP & Framer Motion Animations", "Responsive Engineering", "Component Library Development"],
-    },
-    {
-      title: "Technical Web Design",
-      icon: <Monitor className="text-purple-600" />,
-      features: ["UX Wireframing", "Figma Design Systems", "High-Fidelity Prototyping", "User Interaction Design"],
-    },
-    {
-      title: "Backend & Systems",
-      icon: <Terminal className="text-blue-600" />,
-      features: ["Node.js & Express Servers", "Database Design (PostgreSQL/MongoDB)", "Authentication Systems", "API Architecture"],
-    },
-    {
-      title: "Performance Optimization",
-      icon: <Zap className="text-amber-600" />,
-      features: ["Lighthouse Score Maximization", "Core Web Vitals Improvement", "Image & Asset Optimization", "Asset Caching & CDN"],
-    }
-  ];
+interface ServicesProps {
+  services: Service[];
+}
 
+const IconMapper: Record<string, React.ReactNode> = {
+  Monitor: <Monitor className="text-purple-600" />,
+  Cpu: <Cpu className="text-indigo-600" />,
+  Terminal: <Terminal className="text-blue-600" />,
+  Globe: <Globe className="text-blue-400" />,
+  Zap: <Zap className="text-amber-600" />,
+};
+
+const Services: React.FC<ServicesProps> = ({ services }) => {
   return (
     <div className="pt-40 pb-32 dark:bg-zinc-950 transition-colors">
       <div className="container mx-auto px-6 max-w-7xl">
@@ -50,16 +40,16 @@ const Services: React.FC = () => {
           </div>
           
           <div className="grid gap-10">
-             {detailedServices.slice(0, 1).map((s, i) => (
-                <div key={i} className="p-14 rounded-[4rem] bg-zinc-950 text-white shadow-2xl border border-white/5 group">
+             {services.slice(0, 1).map((s) => (
+                <div key={s.id} className="p-14 rounded-[4rem] bg-zinc-950 text-white shadow-2xl border border-white/5 group">
                   <div className="mb-10">
                     <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-sm">
-                      {s.icon}
+                      {IconMapper[s.icon] || <Cpu className="text-zinc-900" />}
                     </div>
                   </div>
                   <h3 className="text-3xl font-black mb-10 font-display">{s.title}</h3>
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-10">
-                    {s.features.map(f => (
+                    {(s.features || []).map(f => (
                       <li key={f} className="flex items-center gap-3 text-zinc-400 text-sm font-bold tracking-tight">
                         <div className="w-1.5 h-1.5 rounded-full bg-indigo-600"></div> {f}
                       </li>
@@ -71,16 +61,16 @@ const Services: React.FC = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-10">
-           {detailedServices.slice(1).map((s, i) => (
-              <div key={i} className="p-14 rounded-[4rem] bg-zinc-950 text-white shadow-2xl border border-white/5 hover:border-white/10 transition-all group">
+           {services.slice(1).map((s) => (
+              <div key={s.id} className="p-14 rounded-[4rem] bg-zinc-950 text-white shadow-2xl border border-white/5 hover:border-white/10 transition-all group">
                 <div className="mb-10">
                   <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center shadow-sm">
-                    {s.icon}
+                    {IconMapper[s.icon] || <Cpu className="text-zinc-900" />}
                   </div>
                 </div>
                 <h3 className="text-3xl font-black mb-10 font-display">{s.title}</h3>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-10">
-                  {s.features.map(f => (
+                  {(s.features || []).map(f => (
                     <li key={f} className="flex items-center gap-3 text-zinc-400 text-sm font-bold tracking-tight">
                       <div className="w-1.5 h-1.5 rounded-full bg-indigo-600"></div> {f}
                     </li>

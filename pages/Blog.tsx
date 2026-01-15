@@ -2,51 +2,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
+import { BlogPost } from '../types';
 
-const Blog: React.FC = () => {
-  const posts = [
-    {
-      id: 1,
-      category: "MARKETING",
-      time: "5 min read",
-      title: "Conducting in-depth research and usability testing for high-stakes projects",
-      image: "https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&q=80&w=800",
-      date: "OCT 12, 2024"
-    },
-    {
-      id: 2,
-      category: "DESIGN",
-      time: "8 min read",
-      title: "Designing cohesive strategies and visual identities for the modern web",
-      image: "https://images.unsplash.com/photo-1542744094-24638eff58bb?auto=format&fit=crop&q=80&w=800",
-      date: "SEP 28, 2024"
-    },
-    {
-      id: 3,
-      category: "STRATEGY",
-      time: "6 min read",
-      title: "Providing expert advice and strategic guidance to scaling startups",
-      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800",
-      date: "SEP 15, 2024"
-    },
-    {
-      id: 4,
-      category: "ENGINEERING",
-      time: "10 min read",
-      title: "How we achieved 100/100 Lighthouse scores on complex React apps",
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800",
-      date: "AUG 30, 2024"
-    },
-    {
-      id: 5,
-      category: "BUSINESS",
-      time: "4 min read",
-      title: "The ROI of premium UI/UX: Why cheap websites are costing you clients",
-      image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800",
-      date: "AUG 12, 2024"
-    }
-  ];
+interface BlogProps {
+  blogs: BlogPost[];
+}
 
+const Blog: React.FC<BlogProps> = ({ blogs }) => {
   return (
     <div className="pt-40 pb-32 bg-white dark:bg-zinc-950 transition-colors">
       <div className="container mx-auto px-10 max-w-[1400px]">
@@ -78,7 +40,7 @@ const Blog: React.FC = () => {
 
         {/* Blog Grid matching Reference Card Style */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-16">
-          {posts.map((post, i) => (
+          {(blogs || []).map((post, i) => (
             <motion.div 
               key={post.id}
               initial={{ opacity: 0, y: 30 }}

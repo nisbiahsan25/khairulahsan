@@ -8,11 +8,11 @@ import {
   Image as ImageIcon, LogOut, CheckCircle, Activity, 
   MessageSquareQuote, Cpu, ChevronRight, Upload, 
   ShieldCheck, Globe, Link as LinkIcon, Calendar, Layers, Target, 
-  Wrench, FileText, Clock, Tag
+  Wrench, FileText, Clock, Tag, Zap
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Admin: React.FC = () => {
+const Admin: React.FC<{ onSaveSuccess?: () => void }> = ({ onSaveSuccess }) => {
   const [data, setData] = useState<SiteData | null>(null);
   const [activeTab, setActiveTab] = useState<'hero' | 'about' | 'niches' | 'services' | 'skills' | 'experience' | 'projects' | 'testimonials' | 'blog' | 'tracking'>('hero');
   const [saving, setSaving] = useState(false);
@@ -39,6 +39,7 @@ const Admin: React.FC = () => {
     try {
       await saveSiteData(data);
       setShowSuccess(true);
+      if (onSaveSuccess) onSaveSuccess();
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (err) {
       alert("System Error: Cloud synchronization failed.");
@@ -214,7 +215,7 @@ const Admin: React.FC = () => {
                 <motion.div key="services" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-12">
                    <header className="flex justify-between items-end gap-6">
                     <div><h3 className="text-3xl font-black mb-2 dark:text-white">Our Services</h3></div>
-                    <button onClick={() => setData({...data, services: [...(data.services || []), { id: Date.now().toString(), title: "New Service", description: "Service details...", icon: "Monitor" }]})} className="bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-8 py-4 rounded-xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2"><Plus size={16}/> Add Service</button>
+                    <button onClick={() => setData({...data, services: [...(data.services || []), { id: Date.now().toString(), title: "New Service", description: "Service details...", icon: "Monitor", features: [] }]})} className="bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 px-8 py-4 rounded-xl font-black text-[11px] uppercase tracking-widest flex items-center gap-2"><Plus size={16}/> Add Service</button>
                   </header>
                   <div className="grid gap-6">
                     {data.services && data.services.map((svc, idx) => (
@@ -233,9 +234,19 @@ const Admin: React.FC = () => {
                                  <option value="Zap">Zap (Performance)</option>
                               </select>
                            </div>
-                           <div className="md:col-span-3 space-y-2">
-                             <label className="text-[9px] font-black uppercase text-zinc-400 ml-4 tracking-widest">Description</label>
-                             <textarea rows={4} className="w-full bg-zinc-50 dark:bg-zinc-800 p-5 rounded-2xl font-medium text-sm dark:text-white outline-none" value={svc.description} onChange={e => { const n = [...data.services]; n[idx].description = e.target.value; setData({...data, services: n}); }} />
+                           <div className="md:col-span-3 space-y-4">
+                             <div className="space-y-2">
+                               <label className="text-[9px] font-black uppercase text-zinc-400 ml-4 tracking-widest">Brief Description</label>
+                               <textarea rows={2} className="w-full bg-zinc-50 dark:bg-zinc-800 p-5 rounded-2xl font-medium text-sm dark:text-white outline-none" value={svc.description} onChange={e => { const n = [...data.services]; n[idx].description = e.target.value; setData({...data, services: n}); }} />
+                             </div>
+                             <div className="space-y-2">
+                               <label className="text-[9px] font-black uppercase text-zinc-400 ml-4 tracking-widest">Features List (Comma Separated)</label>
+                               <textarea rows={3} className="w-full bg-zinc-50 dark:bg-zinc-800 p-5 rounded-2xl font-bold text-xs dark:text-zinc-400 outline-none" value={svc.features?.join(', ') || ''} onChange={e => { 
+                                  const n = [...data.services]; 
+                                  n[idx].features = e.target.value.split(',').map(f => f.trim()).filter(f => f !== '');
+                                  setData({...data, services: n}); 
+                               }} placeholder="e.g. Next.js Mastery, UI Systems, React Engineering" />
+                             </div>
                            </div>
                         </div>
                       </div>

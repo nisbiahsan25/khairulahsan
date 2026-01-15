@@ -48,6 +48,7 @@ export interface Service {
   title: string;
   description: string;
   icon: string;
+  features: string[];
 }
 
 export interface SkillCategory {

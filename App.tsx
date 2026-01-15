@@ -105,7 +105,7 @@ const App: React.FC = () => {
             <Route path="/services" element={<Services services={siteData?.services || []} />} />
             <Route path="/about" element={<About data={siteData} />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog" element={<Blog blogs={siteData?.blogs || []} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<Admin onSaveSuccess={loadData} />} />
             <Route path="*" element={<Navigate to="/" replace />} />

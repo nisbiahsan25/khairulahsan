@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, MoveDown, ArrowRight, Terminal, Monitor, Cpu, Briefcase, Quote, Database, Figma, Code2, Target } from 'lucide-react';
+import { ArrowUpRight, MoveDown, ArrowRight, Terminal, Monitor, Cpu, Briefcase, Quote, Database, Figma, Code2, Target, Zap, Globe } from 'lucide-react';
 import { SiteData } from '../types';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
@@ -16,6 +16,8 @@ const IconMapper: Record<string, React.ReactNode> = {
   Terminal: <Terminal className="text-indigo-600" />,
   Monitor: <Monitor className="text-purple-600" />,
   Cpu: <Cpu className="text-zinc-900" />,
+  Zap: <Zap className="text-amber-500" />,
+  Globe: <Globe className="text-blue-400" />,
 };
 
 const Home: React.FC<HomeProps> = ({ data }) => {
@@ -26,27 +28,15 @@ const Home: React.FC<HomeProps> = ({ data }) => {
 
   if (!data) return null;
 
-  const { hero, experiences, projects, testimonials, technicalSkills = [], niches = [] } = data;
+  const { hero, experiences, projects, testimonials, technicalSkills = [], niches = [], services = [] } = data;
   const titleWords = hero.headline.split(" ");
 
-  const webServices = [
-    {
-      title: "Elite Web Engineering",
-      icon: <Terminal className="text-indigo-600" />,
-      features: ["Next.js & React Mastery", "Scalable Serverless Code", "Dynamic API Design", "Database Optimization"],
-    },
-    {
-      title: "Technical UI/UX Design",
-      icon: <Monitor className="text-purple-600" />,
-      features: ["Precision Prototyping", "Design System Architecture", "Interaction Engineering", "Accessibility Standards"],
-    }
-  ];
-
+  // Fix: added 'as const' to ease to ensure it's treated as a specific literal string for framer-motion compatibility
   const sectionAnimation = {
     initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, margin: "-150px" },
-    transition: { duration: 0.3, ease: "easeOut" }
+    transition: { duration: 0.3, ease: "easeOut" as const }
   };
 
   return (
@@ -62,7 +52,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
               y: [0, -30, 0],
               scale: [1, 1.1, 1],
             }}
-            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" as const }}
             className="absolute top-[-5%] right-[-5%] w-[400px] h-[400px] bg-indigo-500/10 dark:bg-indigo-500/15 rounded-full blur-[70px]"
             style={{ willChange: 'transform, opacity' }}
           />
@@ -72,7 +62,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
               y: [0, 60, 0],
               scale: [1, 1.2, 1],
             }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" as const }}
             className="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] bg-purple-500/10 dark:bg-purple-500/15 rounded-full blur-[80px]"
             style={{ willChange: 'transform, opacity' }}
           />
@@ -102,7 +92,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
                   key={i}
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.03, duration: 0.3, ease: "easeOut" }}
+                  transition={{ delay: i * 0.03, duration: 0.3, ease: "easeOut" as const }}
                   className={`mr-[0.2em] ${i === titleWords.length - 1 ? 'text-indigo-600 dark:text-indigo-400' : ''}`}
                 >
                   {word}
@@ -137,7 +127,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            transition={{ duration: 0.5, ease: "easeOut" as const }}
             className="order-1 lg:order-2 flex justify-center lg:justify-end"
           >
             <div className="relative aspect-[4/5] w-full max-w-[380px] md:max-w-[420px] rounded-[2.5rem] md:rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white/10 dark:border-white/5 backdrop-blur-sm">
@@ -201,9 +191,9 @@ const Home: React.FC<HomeProps> = ({ data }) => {
             </div>
 
             <div className="grid gap-6 md:gap-8">
-               {webServices.map((s, idx) => (
+               {services.slice(0, 2).map((s, idx) => (
                  <motion.div 
-                   key={idx}
+                   key={s.id}
                    initial={{ opacity: 0, y: 15 }}
                    whileInView={{ opacity: 1, y: 0 }}
                    viewport={{ once: true }}
@@ -211,11 +201,11 @@ const Home: React.FC<HomeProps> = ({ data }) => {
                    className="p-10 md:p-12 rounded-[2.5rem] bg-zinc-950 text-white shadow-2xl border border-white/5 relative group overflow-hidden"
                  >
                    <div className="w-12 h-12 md:w-16 bg-white rounded-2xl flex items-center justify-center mb-8 shadow-sm transition-transform group-hover:-rotate-6">
-                      {s.icon}
+                      {IconMapper[s.icon] || <Cpu className="text-zinc-900" />}
                    </div>
                    <h3 className="text-2xl md:text-3xl font-black mb-6">{s.title}</h3>
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-10">
-                      {s.features.map((f, i) => (
+                      {(s.features || []).map((f, i) => (
                         <div key={i} className="flex items-center gap-3 text-zinc-400 text-[12px] md:text-sm font-bold">
                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500"></div> {f}
                         </div>

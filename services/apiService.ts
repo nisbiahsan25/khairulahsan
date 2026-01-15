@@ -34,14 +34,6 @@ const DEFAULT_DATA: SiteData = {
       date: "2024 - Present",
       tags: ["TypeScript", "Next.js", "PostgreSQL"],
       highlight: true
-    },
-    {
-      id: "exp-2",
-      company: "Pixel Studio",
-      role: "Lead UI/UX Architect",
-      date: "2022 - 2024",
-      tags: ["Figma", "Interaction Design", "SCSS"],
-      highlight: false
     }
   ],
   niches: [
@@ -55,19 +47,15 @@ const DEFAULT_DATA: SiteData = {
       id: "s1",
       title: "UI/UX Web Design",
       description: "Bespoke visual identities designed specifically for high-conversion web interfaces.",
-      icon: "Monitor"
+      icon: "Monitor",
+      features: ["UX Wireframing", "Figma Design Systems", "High-Fidelity Prototyping", "User Interaction Design"]
     },
     {
       id: "s2",
       title: "Frontend Engineering",
       description: "Developing lightning-fast user interfaces with React, Next.js, and GSAP animations.",
-      icon: "Cpu"
-    },
-    {
-      id: "s3",
-      title: "Fullstack Architecture",
-      description: "Robust server-side systems and database management for scalable web products.",
-      icon: "Terminal"
+      icon: "Cpu",
+      features: ["React & Next.js Architecture", "GSAP & Framer Motion Animations", "Responsive Engineering", "Component Library Development"]
     }
   ],
   projects: [
@@ -96,12 +84,21 @@ const DEFAULT_DATA: SiteData = {
       skills: ["React & Next.js", "TypeScript", "Tailwind CSS"]
     }
   ],
-  blogs: []
+  blogs: [
+    {
+      id: "b1",
+      category: "ENGINEERING",
+      time: "10 min read",
+      title: "How we achieved 100/100 Lighthouse scores on complex React apps",
+      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800",
+      date: "AUG 30, 2024"
+    }
+  ]
 };
 
 export const fetchSiteData = async (): Promise<SiteData> => {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 1500); // 1.5s timeout for faster loading
+  const timeoutId = setTimeout(() => controller.abort(), 1500);
 
   try {
     const response = await fetch(API_URL, { signal: controller.signal });
@@ -113,11 +110,13 @@ export const fetchSiteData = async (): Promise<SiteData> => {
           ...DEFAULT_DATA,
           ...data,
           niches: data.niches || DEFAULT_DATA.niches,
+          services: data.services || DEFAULT_DATA.services,
+          blogs: data.blogs || DEFAULT_DATA.blogs
         };
       }
     }
   } catch (e) {
-    console.warn("Server fetch timed out or failed, using local defaults for speed.", e);
+    console.warn("Server fetch timed out or failed, using local defaults.", e);
   }
   return DEFAULT_DATA;
 };
