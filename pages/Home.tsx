@@ -20,18 +20,39 @@ const IconMapper: Record<string, React.ReactNode> = {
   Globe: <Globe className="text-blue-400" />,
 };
 
+const SkeletonHero = () => (
+  <section className="relative min-h-[85vh] pt-32 md:pt-40 px-6 md:px-10 flex items-center justify-center overflow-hidden">
+    <div className="container mx-auto max-w-[1400px] grid lg:grid-cols-2 gap-12 lg:gap-10 items-center">
+      <div className="space-y-12">
+        <div className="flex gap-16">
+          <div className="h-10 w-24 bg-zinc-100 dark:bg-zinc-900 animate-pulse rounded-lg"></div>
+          <div className="h-10 w-24 bg-zinc-100 dark:bg-zinc-900 animate-pulse rounded-lg"></div>
+        </div>
+        <div className="space-y-4">
+          <div className="h-20 w-full bg-zinc-100 dark:bg-zinc-900 animate-pulse rounded-2xl"></div>
+          <div className="h-20 w-4/5 bg-zinc-100 dark:bg-zinc-900 animate-pulse rounded-2xl"></div>
+        </div>
+        <div className="h-8 w-3/4 bg-zinc-100 dark:bg-zinc-900 animate-pulse rounded-xl"></div>
+      </div>
+      <div className="flex justify-end">
+        <div className="aspect-[4/5] w-full max-w-[420px] bg-zinc-100 dark:bg-zinc-900 animate-pulse rounded-[3rem]"></div>
+      </div>
+    </div>
+  </section>
+);
+
 const Home: React.FC<HomeProps> = ({ data }) => {
   const { scrollY } = useScroll();
   
   const y1 = useTransform(scrollY, [0, 500], [0, 60]);
   const y2 = useTransform(scrollY, [0, 500], [0, -50]);
 
-  if (!data) return null;
+  // Show premium skeleton while first-time loading to avoid demo data flicker
+  if (!data) return <SkeletonHero />;
 
   const { hero, experiences, projects, testimonials, technicalSkills = [], niches = [], services = [] } = data;
   const titleWords = hero.headline.split(" ");
 
-  // Fix: added 'as const' to ease to ensure it's treated as a specific literal string for framer-motion compatibility
   const sectionAnimation = {
     initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },
@@ -90,9 +111,9 @@ const Home: React.FC<HomeProps> = ({ data }) => {
               {titleWords.map((word, i) => (
                 <motion.span
                   key={i}
-                  initial={{ opacity: 0, y: 15 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.03, duration: 0.3, ease: "easeOut" as const }}
+                  transition={{ delay: i * 0.02, duration: 0.25, ease: "easeOut" as const }}
                   className={`mr-[0.2em] ${i === titleWords.length - 1 ? 'text-indigo-600 dark:text-indigo-400' : ''}`}
                 >
                   {word}
@@ -102,7 +123,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
             <motion.p 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.3 }}
+              transition={{ delay: 0.2, duration: 0.3 }}
               className="text-lg md:text-xl text-zinc-600 dark:text-zinc-300 font-medium max-w-lg mb-8 md:mb-10"
             >
               {hero.subheadline}
@@ -111,7 +132,7 @@ const Home: React.FC<HomeProps> = ({ data }) => {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
+              transition={{ delay: 0.3 }}
               className="mt-12 flex items-center gap-4 text-zinc-400 font-bold text-[10px] md:text-xs uppercase tracking-widest"
             >
               <motion.div
@@ -127,13 +148,15 @@ const Home: React.FC<HomeProps> = ({ data }) => {
           <motion.div 
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, ease: "easeOut" as const }}
+            transition={{ duration: 0.4, ease: "easeOut" as const }}
             className="order-1 lg:order-2 flex justify-center lg:justify-end"
           >
             <div className="relative aspect-[4/5] w-full max-w-[380px] md:max-w-[420px] rounded-[2.5rem] md:rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white/10 dark:border-white/5 backdrop-blur-sm">
               <img 
                 src={hero.image} 
                 alt="Elite Web Engineering" 
+                loading="eager"
+                fetchpriority="high"
                 className="w-full h-full object-cover grayscale-0 transition-transform duration-[1s] hover:scale-105"
                 style={{ willChange: 'transform' }}
               />
